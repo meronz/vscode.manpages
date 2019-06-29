@@ -2,6 +2,7 @@
 
 Open the man page for the selected word. Move quickly by following links inside the man page.
 
+Huge thanks to the Microsoft documentation and [example projects](https://github.com/Microsoft/vscode-extension-samples)!
 
 ## Requirements
 

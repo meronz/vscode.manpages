@@ -1,13 +1,32 @@
 {
 	"name": "manpages",
 	"displayName": "manpages",
-    "publisher" : "meronz",
+	"publisher": "meronz",
 	"description": "Quickly open man pages and navigate through them.",
 	"version": "0.0.1",
+	"author": {
+		"name": "Salvatore Merone"
+	},
+	"readme": "README.md",
+	"license": "GPLv3",
 	"repository": {
-		"type": "GitLab",
+		"type": "git",
 		"url": "https://gitlab.com/meronz/vscode.manpages"
 	},
+	"bugs": {
+		"url": "https://gitlab.com/meronz/vscode.manpages/issues"
+	},
+	"homepage": "https://gitlab.com/meronz/vscode.manpages",
+	"qna": "https://gitlab.com/meronz/vscode.manpages/issues",
+	"keywords": [
+		"man",
+		"page",
+		"manpage",
+		"linux",
+		"shell",
+		"C",
+		"docs"
+	],
 	"engines": {
 		"vscode": "^1.8.0"
 	},
