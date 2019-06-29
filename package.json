@@ -3,6 +3,10 @@
 	"displayName": "manpages",
 	"description": "Quickly open man pages and navigate through them.",
 	"version": "0.0.1",
+	"repository": {
+		"type": "GitLab",
+		"url": "https://gitlab.com/meronz/vscode.manpages"
+	},
 	"engines": {
 		"vscode": "^1.8.0"
 	},
