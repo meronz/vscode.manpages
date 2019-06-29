@@ -1,6 +1,7 @@
 {
-	"name": "meronz.manpages",
+	"name": "manpages",
 	"displayName": "manpages",
+    "publisher" : "meronz",
 	"description": "Quickly open man pages and navigate through them.",
 	"version": "0.0.1",
 	"repository": {
