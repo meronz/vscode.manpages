@@ -30,7 +30,13 @@ export function activate(context: ExtensionContext) {
 	);
 
 	let openFromSelection = commands.registerTextEditorCommand('manpages.openFromSelection', editor => {
-		let text = editor.document.getText(editor.selection);
+		let text;
+		if (editor.selection.isEmpty) {
+			text = editor.document.getText(editor.document.getWordRangeAtPosition(editor.selection.active));
+		} else {
+			text = editor.document.getText(editor.selection);
+		}
+
 		let column = (editor.viewColumn!) + 1; // show to the side
 		return openManPage(text, column);
 	});
