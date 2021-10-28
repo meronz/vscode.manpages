@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Salvatore Merone
+// Copyright (C) 2021 Salvatore Merone
 // 
 // This file is part of vscode.manpages.
 // 
