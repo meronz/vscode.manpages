@@ -58,16 +58,20 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
 		const alpha_only_re = /([a-zA-Z_]+)(\(\d\))?/;
 		const input = uri.path.substr(1);
 		let m = alpha_only_re.exec(input); // skip leading '/')
-		
-		if(!m) {
+
+		if (!m) {
 			return new Promise(() => vscode.window.showErrorMessage('undefined'));
 		}
 
-
 		let word = m[1];
 		let section = (m[2] === undefined) ? '' : m[2].match(/\d/);
-		var cmd = `man ${section} ${word}`;
-		
+
+		if (process.platform === 'darwin') {
+			var cmd = `sh -c 'man ${section} ${word} | col -b; ${'exit "${PIPESTATUS[0]}${pipestatus[1]}"'}'`;
+		} else {
+			var cmd = `man ${section} ${word}`;
+		}
+
 		return new Promise((resolve, reject) => {
 			const cp = require('child_process');
 			cp.exec(cmd, (err: string, stdout: string, stderr: string) => {
