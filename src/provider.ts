@@ -16,6 +16,7 @@
 // along with vscode.manpages.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as vscode from 'vscode';
+import { MAN_COMMAND_SECTION_REGEX } from './consts';
 import ManpageDocument from './manpageDocument';
 
 export default class ManpageContentProvider implements vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider {
@@ -55,9 +56,9 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
 			return document.content;
 		}
 
-		const alpha_only_re = /([a-zA-Z_.-]+)(\(\d\))?/;
+
 		const input = uri.path.substr(1);
-		let m = alpha_only_re.exec(input); // skip leading '/')
+		let m = MAN_COMMAND_SECTION_REGEX.exec(input); // skip leading '/')
 
 		if (!m) {
 			return new Promise(() => vscode.window.showErrorMessage('undefined'));

@@ -16,6 +16,7 @@
 // along with vscode.manpages.  If not, see <http://www.gnu.org/licenses/>.
 
 import { workspace, languages, window, commands, ExtensionContext, Disposable, Uri } from 'vscode';
+import { MAN_COMMAND_REGEX } from './consts';
 
 import ManpageContentProvider from './provider';
 
@@ -32,9 +33,15 @@ export function activate(context: ExtensionContext) {
 	let openFromSelection = commands.registerTextEditorCommand('manpages.openFromSelection', editor => {
 		let text;
 		if (editor.selection.isEmpty) {
-			text = editor.document.getText(editor.document.getWordRangeAtPosition(editor.selection.active));
+			const wordRange = editor.document.getWordRangeAtPosition(editor.selection.active, MAN_COMMAND_REGEX);
+			if (!wordRange) { return; }
+			text = editor.document.getText(wordRange);
 		} else {
 			text = editor.document.getText(editor.selection);
+		}
+
+		if (!text || text.length == 0) {
+			return;
 		}
 
 		let column = (editor.viewColumn!) + 1; // show to the side

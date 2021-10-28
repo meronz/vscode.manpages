@@ -47,7 +47,6 @@
 		"menus": {
 			"editor/context": [
 				{
-					"when": "editorHasSelection",
 					"command": "manpages.openFromSelection",
 					"group": "navigation"
 				}
