@@ -55,7 +55,7 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
 			return document.content;
 		}
 
-		const alpha_only_re = /([a-zA-Z_]+)(\(\d\))?/;
+		const alpha_only_re = /([a-zA-Z_.-]+)(\(\d\))?/;
 		const input = uri.path.substr(1);
 		let m = alpha_only_re.exec(input); // skip leading '/')
 
