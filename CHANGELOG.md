@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.0.2
+## 0.0.3
 
 - Updated dependencies.
 - Fixed manpage mangled output on MacOS (thanks @nicolasff).
