@@ -28,7 +28,7 @@
 		"docs"
 	],
 	"engines": {
-		"vscode": "^1.8.0"
+		"vscode": "^1.61.0"
 	},
 	"categories": [
 		"Other"
@@ -58,14 +58,21 @@
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+		"pretest": "npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
-		"typescript": "^3.3.1",
-		"vscode": "^1.1.28",
-		"tslint": "^5.12.1",
-		"@types/node": "^10.12.21",
-		"@types/mocha": "^2.2.42"
+		"@types/vscode": "^1.61.0",
+		"@types/glob": "^7.1.4",
+		"@types/mocha": "^9.0.0",
+		"@types/node": "14.x",
+		"@typescript-eslint/eslint-plugin": "^4.31.1",
+		"@typescript-eslint/parser": "^4.31.1",
+		"eslint": "^7.32.0",
+		"glob": "^7.1.7",
+		"mocha": "^9.1.1",
+		"typescript": "^4.4.3",
+		"@vscode/test-electron": "^1.6.2"
 	}
 }
