@@ -52,6 +52,21 @@
 					"group": "navigation"
 				}
 			]
+		},
+		"configuration": {
+			"title": "Manpages",
+			"properties": {
+				"manpages.binary.path": {
+					"type": "string",
+					"default": "man",
+					"description": "Specifies the path of the man binary to execute"
+				},
+				"manpages.binary.args": {
+					"type": "array",
+					"default": [],
+					"description": "Specifies the arguments to be passed to the man binary"
+				}
+			}
 		}
 	},
 	"scripts": {

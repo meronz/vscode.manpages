@@ -63,14 +63,11 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
 			return new Promise(() => vscode.window.showErrorMessage('undefined'));
 		}
 
+		let sectionMatch = m[2]?.match(/\d/);
 		let word = m[1];
-		let section = (m[2] === undefined) ? '' : m[2].match(/\d/);
+		let section = !sectionMatch ? null : sectionMatch[0];
 
-		if (process.platform === 'darwin') {
-			var cmd = `sh -c 'man ${section} ${word} | col -b; ${'exit "${PIPESTATUS[0]}${pipestatus[1]}"'}'`;
-		} else {
-			var cmd = `man ${section} ${word}`;
-		}
+		const cmd = this.buildCmdline(section, word);
 
 		return new Promise((resolve, reject) => {
 			const cp = require('child_process');
@@ -92,6 +89,24 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
 		if (doc) {
 			return doc.links;
 		}
+	}
+
+	buildCmdline(section: string | null, word: string): string {
+		const path = vscode.workspace.getConfiguration('manpages.binary').get('path') as string;
+		const args = vscode.workspace.getConfiguration('manpages.binary').get('args') as string[];
+
+		let cmd = '';
+
+		cmd += path + ' ';
+		cmd += args.join(' ') + ' ';
+		if (section) { cmd += section + ' '; }
+		cmd += word + ' ';
+
+		if (process.platform === 'darwin') {
+			cmd = `sh -c '${cmd} | col -b; ${'exit "${PIPESTATUS[0]}${pipestatus[1]}"'}'`;
+		}
+
+		return cmd;
 	}
 }
 
