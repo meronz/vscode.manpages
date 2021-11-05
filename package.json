@@ -3,7 +3,7 @@
 	"displayName": "manpages",
 	"publisher": "meronz",
 	"description": "Quickly open man pages and navigate through them.",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"author": {
 		"name": "Salvatore Merone"
 	},
@@ -11,13 +11,13 @@
 	"license": "GPLv3",
 	"repository": {
 		"type": "git",
-		"url": "https://gitlab.com/meronz/vscode.manpages"
+		"url": "https://github.com/meronz/vscode.manpages"
 	},
 	"bugs": {
-		"url": "https://gitlab.com/meronz/vscode.manpages/issues"
+		"url": "https://github.com/meronz/vscode.manpages/issues"
 	},
-	"homepage": "https://gitlab.com/meronz/vscode.manpages",
-	"qna": "https://gitlab.com/meronz/vscode.manpages/issues",
+	"homepage": "https://github.com/meronz/vscode.manpages",
+	"qna": "https://github.com/meronz/vscode.manpages/issues",
 	"keywords": [
 		"man",
 		"page",
