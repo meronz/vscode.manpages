@@ -2,14 +2,7 @@
 
 Open the man page for the word under cursor or selected. Move quickly by following links inside the man page.
 
-Huge thanks to the Microsoft documentation and [example projects](https://github.com/Microsoft/vscode-extension-samples)!
-
 ## Requirements
 
-This extension requires `man` to be installed. 
-
-## Known Issues
-
-Since it spawns a **man** process to access the documentation, the first release targets only operating systems that have man installed. This requirement should change in the future.
-
----
+This extension requires `man` to be installed and working from the integrated terminal.  
+You may configure the command to execute the man binary with the `man.path` setting (for example on Windows with WSL installed you may use the setting `"manpages.binary.path": "wsl man"`) and/or use `"manpages.binary.arg"` setting to pass additional options (execute `man --help` in the terminal to see those) like additional paths to search (`"--manpath=/some/path"`) or locales to use (`"--locale=fr"`).
