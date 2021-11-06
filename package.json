@@ -34,20 +34,27 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:manpages.openFromSelection"
+		"*"
 	],
-	"main": "./dist/extension.js",
+	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "manpages.openFromSelection",
-				"title": "Open man page"
+				"command": "openFromSelection",
+				"category": "Man",
+				"title": "Open man page",
+				"enablement": "!inQuickOpen"
+			},
+			{
+				"command": "openFromInput",
+				"category": "Man",
+				"title": "Open page"
 			}
 		],
 		"menus": {
 			"editor/context": [
 				{
-					"command": "manpages.openFromSelection",
+					"command": "openFromSelection",
 					"group": "navigation"
 				}
 			]
@@ -70,7 +77,7 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run esbuild-base -- --minify",
-		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
+		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
 		"esbuild": "npm run esbuild-base -- --sourcemap",
 		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
 		"compile": "tsc -p ./",

@@ -30,7 +30,7 @@ export function activate(context: ExtensionContext) {
 		languages.registerDocumentLinkProvider({ scheme: ManpageContentProvider.scheme }, provider)
 	);
 
-	let openFromSelection = commands.registerTextEditorCommand('manpages.openFromSelection', editor => {
+	let openFromSelection = commands.registerTextEditorCommand('openFromSelection', editor => {
 		let text;
 		if (editor.selection.isEmpty) {
 			const wordRange = editor.document.getWordRangeAtPosition(editor.selection.active, MAN_COMMAND_REGEX);
@@ -40,16 +40,23 @@ export function activate(context: ExtensionContext) {
 			text = editor.document.getText(editor.selection);
 		}
 
-		if (!text || text.length == 0) {
-			return;
-		}
-
 		let column = (editor.viewColumn!) + 1; // show to the side
 		return openManPage(text, column);
 	});
 
-	let openFromInput = commands.registerCommand('manpages.openFromInput', (text: string) => {
-		return openManPage(text, 0);
+	let openFromInput = commands.registerCommand('openFromInput', async (editor) => {
+		const result = await window.showInputBox({
+			value: '',
+			placeHolder: 'Entry name',
+			validateInput: text => {
+				return !MAN_COMMAND_REGEX.test(text) ? 'Invalid entry!' : null;
+			}
+		});
+
+		if (result) {
+			let column = (window.activeTextEditor?.viewColumn ?? -1) + 1; // show to the side
+			return openManPage(result, column);
+		}
 	});
 
 	context.subscriptions.push(
@@ -57,6 +64,10 @@ export function activate(context: ExtensionContext) {
 }
 
 export async function openManPage(input: string, column: number) {
+	if (!input || input.length == 0) {
+		return;
+	}
+
 	const uri = Uri.parse('man:///' + input);
 	const doc = await workspace.openTextDocument(uri);
 	let textDocument = await window.showTextDocument(doc, column);
