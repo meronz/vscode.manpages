@@ -16,5 +16,5 @@
 // along with vscode.manpages.  If not, see <http://www.gnu.org/licenses/>.
 
 export const MAN_COMMAND_REGEX = /[0-9a-zA-Z_.-:+]+/;
-export const MAN_COMMAND_SECTION_REGEX = /^([^(]+)(\(\d\))?/;
-export const MAN_APROPOS_REGEX = /^(.+)\s\((\w+)\)\s* - (.+$)/;
+export const MAN_COMMAND_SECTION_REGEX = /^([^(]+)\((\w+)\)?/;
+export const MAN_APROPOS_REGEX = /^(.+\s?\(\w+\))+\s*- (.+$)/;

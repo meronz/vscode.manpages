@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MAN_APROPOS_REGEX, MAN_COMMAND_REGEX } from './consts';
+import { MAN_APROPOS_REGEX, MAN_COMMAND_REGEX, MAN_COMMAND_SECTION_REGEX } from './consts';
 import { log } from 'console';
 import { commands, window } from 'vscode';
 import { openManPage } from './manpageContentProvider';
@@ -66,32 +66,52 @@ export class SearchResultView {
         cmd += path + ' ';
         cmd += args.join(' ') + ' ';
         if (process.platform !== 'darwin') {
-            cmd += '-a -l '
+            cmd += '-a -l ';
         }
         cmd += searchInput;
 
         return cmd;
     }
 
-    private parseApropos(stdout: string): SearchResult[] {
+    parseApropos(stdout: string): SearchResult[] {
         let results: SearchResult[] = [];
 
         stdout.split(/\r?\n/).forEach(line => {
-            if (!line || line.length == 0) {
+            if (!line || line.length === 0) {
                 return;
             }
 
             let m = MAN_APROPOS_REGEX.exec(line);
-            if (!m || m.length != 4) {
+            if (!m) {
                 log(`Could not match line "${line}".`);
-                return null;
+                return;
             }
 
-            let name = m[1];
-            let section = m[2];
-            let description = m[3];
+            let valueSplit = m[1].split(',');
+            let description = m[2].trim();
 
-            results.push(new SearchResult(name, section, description));
+            // MacOS can group similar entries in the same row.
+            // Here we treat them as multiple entries for a cleaner experience
+            if (valueSplit.length > 1) {
+                valueSplit.forEach(v => {
+                    let valueMatch = MAN_COMMAND_SECTION_REGEX.exec(v);
+                    if (!valueMatch) { return; }
+
+                    let name = valueMatch[1].trim();
+                    let section = valueMatch[2].trim();
+
+                    results.push(new SearchResult(name, section, description));
+                });
+
+            } else {
+                let valueMatch = MAN_COMMAND_SECTION_REGEX.exec(m[1]);
+                if (!valueMatch) { return; }
+
+                let name = valueMatch[1].trim();
+                let section = valueMatch[2].trim();
+
+                results.push(new SearchResult(name, section, description));
+            }
         });
 
         return results;
@@ -118,7 +138,10 @@ export class SearchResultsProvider implements vscode.TreeDataProvider<SearchResu
 }
 
 export class SearchResult extends vscode.TreeItem {
-    constructor(name: string, section: string, description: string) {
+    constructor(
+        public readonly name: string, 
+        public readonly section: string,
+        description: string) {
         super(`${name} (${section})`, vscode.TreeItemCollapsibleState.None);
         this.tooltip = description;
         this.description = description;
@@ -126,6 +149,6 @@ export class SearchResult extends vscode.TreeItem {
             command: 'openSearchResult',
             title: '',
             arguments: [`${name}(${section})`]
-        }
+        };
     }
 }

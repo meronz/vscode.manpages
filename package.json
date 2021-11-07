@@ -123,7 +123,7 @@
 		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
+		"pretest": "npm run compile",
 		"lint": "eslint src --ext ts",
 		"test": "node ./out/test/runTest.js"
 	},

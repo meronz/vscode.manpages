@@ -58,6 +58,7 @@ export function activate(context: ExtensionContext) {
 		}
 	});
 
+	// tslint:disable-next-line: no-unused-expression
 	new SearchResultView(context);
 
 	context.subscriptions.push(
