@@ -32,11 +32,11 @@ export class SearchResultView {
             treeDataProvider: this.provider,
         });
 
-        let openSearchResult = commands.registerCommand('openSearchResult', async (item: string) => {
+        let openSearchResult = commands.registerCommand('manpages.openSearchResult', async (item: string) => {
             return openManPage(item ?? '');
         });
 
-        let searchFromInput = commands.registerCommand('searchFromInput', async () => {
+        let searchFromInput = commands.registerCommand('manpages.searchFromInput', async () => {
             const searchInput = await window.showInputBox({
                 value: '',
                 placeHolder: 'Search value',
@@ -67,8 +67,9 @@ export class SearchResultView {
                 this.provider.results = this.parseApropos(stdout);
                 if (this.provider.results.length > 0) {
                     this.provider.refresh();
+                    this.treeView.title = searchInput;
                     vscode.commands.executeCommand('setContext', 'manpages:hasResults', true);
-                    vscode.commands.executeCommand('workbench.view.extension.searchResults');
+                    vscode.commands.executeCommand('searchResults.focus');
                 }
             }
         });
@@ -163,7 +164,7 @@ export class SearchResult extends vscode.TreeItem {
         this.tooltip = description;
         this.description = description;
         this.command = {
-            command: 'openSearchResult',
+            command: 'manpages.openSearchResult',
             title: '',
             arguments: [`${name}(${section})`]
         };

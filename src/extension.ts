@@ -31,7 +31,7 @@ export function activate(context: ExtensionContext): void {
         languages.registerDocumentLinkProvider({ scheme: ManpageContentProvider.scheme }, provider)
     );
 
-    const openFromSelection = commands.registerTextEditorCommand('openFromSelection', (editor) => {
+    const openFromSelection = commands.registerTextEditorCommand('manpages.openFromSelection', (editor) => {
         let text;
         if (editor.selection.isEmpty) {
             const wordRange = editor.document.getWordRangeAtPosition(editor.selection.active, MAN_COMMAND_REGEX);
@@ -44,7 +44,7 @@ export function activate(context: ExtensionContext): void {
         return openManPage(text);
     });
 
-    const openFromInput = commands.registerCommand('openFromInput', async () => {
+    const openFromInput = commands.registerCommand('manpages.openFromInput', async () => {
         const result = await window.showInputBox({
             value: '',
             placeHolder: 'Entry name',

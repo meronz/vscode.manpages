@@ -1,6 +1,6 @@
 {
     "name": "manpages",
-    "displayName": "manpages",
+    "displayName": "Manpages",
     "publisher": "meronz",
     "description": "Quickly open man pages and navigate through them.",
     "version": "0.0.6",
@@ -35,38 +35,36 @@
         "Other"
     ],
     "activationEvents": [
-        "*"
+        "onStartupFinished",
+        "onView:searchResults",
+        "onCommand:manpages.openFromSelection",
+        "onCommand:manpages.openFromInput",
+        "onCommand:manpages.searchFromInput"
     ],
     "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
-                "command": "openFromSelection",
+                "command": "manpages.openFromSelection",
                 "category": "Man",
-                "title": "Open man page",
+                "title": "Man: open page",
                 "enablement": "!inQuickOpen"
             },
             {
-                "command": "openFromInput",
+                "command": "manpages.openFromInput",
                 "category": "Man",
                 "title": "Open page"
             },
             {
-                "command": "searchFromInput",
+                "command": "manpages.searchFromInput",
                 "category": "Man",
                 "title": "Search (apropos)"
-            },
-            {
-                "title": "openSearchResult",
-                "command": "openSearchResult",
-                "category": "Man",
-                "enablement": "!inQuickOpen"
             }
         ],
         "menus": {
             "editor/context": [
                 {
-                    "command": "openFromSelection",
+                    "command": "manpages.openFromSelection",
                     "group": "navigation"
                 }
             ]
@@ -75,7 +73,7 @@
             "activitybar": [
                 {
                     "id": "searchResults",
-                    "title": "Man search results",
+                    "title": "Manpages",
                     "icon": "media/activitybar.svg"
                 }
             ]
@@ -84,9 +82,9 @@
             "searchResults": [
                 {
                     "id": "searchResults",
-                    "name": "Man search results",
+                    "name": "Manpages",
                     "icon": "media/activitybar.svg",
-                    "contextualTitle": "Search Results",
+                    "contextualTitle": "Manpages",
                     "when": "manpages:hasResults"
                 }
             ]
