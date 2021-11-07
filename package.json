@@ -1,96 +1,143 @@
 {
-	"name": "manpages",
-	"displayName": "manpages",
-	"publisher": "meronz",
-	"description": "Quickly open man pages and navigate through them.",
-	"version": "0.0.6",
-	"author": {
-		"name": "Salvatore Merone"
-	},
-	"readme": "README.md",
-	"license": "GPLv3",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/meronz/vscode.manpages"
-	},
-	"bugs": {
-		"url": "https://github.com/meronz/vscode.manpages/issues"
-	},
-	"homepage": "https://github.com/meronz/vscode.manpages",
-	"qna": "https://github.com/meronz/vscode.manpages/issues",
-	"keywords": [
-		"man",
-		"page",
-		"manpage",
-		"linux",
-		"shell",
-		"C",
-		"docs"
-	],
-	"engines": {
-		"vscode": "^1.61.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:manpages.openFromSelection"
-	],
-	"main": "./dist/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "manpages.openFromSelection",
-				"title": "Open man page"
-			}
-		],
-		"menus": {
-			"editor/context": [
-				{
-					"command": "manpages.openFromSelection",
-					"group": "navigation"
-				}
-			]
-		},
-		"configuration": {
-			"title": "Manpages",
-			"properties": {
-				"manpages.binary.path": {
-					"type": "string",
-					"default": "man",
-					"description": "Specifies the path of the man binary to execute"
-				},
-				"manpages.binary.args": {
-					"type": "array",
-					"default": [],
-					"description": "Specifies the arguments to be passed to the man binary"
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run esbuild-base -- --minify",
-		"esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
-		"esbuild": "npm run esbuild-base -- --sourcemap",
-		"esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
-	},
-	"devDependencies": {
-		"@types/glob": "^7.1.4",
-		"@types/mocha": "^9.0.0",
-		"@types/node": "14.x",
-		"@types/vscode": "^1.61.0",
-		"@typescript-eslint/eslint-plugin": "^4.31.1",
-		"@typescript-eslint/parser": "^4.31.1",
-		"@vscode/test-electron": "^1.6.2",
-		"esbuild": "^0.13.10",
-		"eslint": "^7.32.0",
-		"glob": "^7.1.7",
-		"mocha": "^9.1.1",
-		"typescript": "^4.4.3"
-	}
+    "name": "manpages",
+    "displayName": "Manpages",
+    "publisher": "meronz",
+    "description": "Quickly open man pages and navigate through them.",
+    "version": "0.1.0",
+    "icon": "media/logo.png",
+    "author": {
+        "name": "Salvatore Merone"
+    },
+    "readme": "README.md",
+    "license": "GPLv3",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/meronz/vscode.manpages"
+    },
+    "bugs": {
+        "url": "https://github.com/meronz/vscode.manpages/issues"
+    },
+    "homepage": "https://github.com/meronz/vscode.manpages",
+    "qna": "https://github.com/meronz/vscode.manpages/issues",
+    "keywords": [
+        "man",
+        "page",
+        "manpage",
+        "linux",
+        "shell",
+        "C",
+        "docs"
+    ],
+    "engines": {
+        "vscode": "^1.61.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onStartupFinished",
+        "onView:searchResults",
+        "onCommand:manpages.openFromSelection",
+        "onCommand:manpages.openFromInput",
+        "onCommand:manpages.searchFromInput"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "manpages.openFromSelection",
+                "category": "Man",
+                "title": "Man: open page",
+                "enablement": "!inQuickOpen"
+            },
+            {
+                "command": "manpages.openFromInput",
+                "category": "Man",
+                "title": "Open page"
+            },
+            {
+                "command": "manpages.searchFromInput",
+                "category": "Man",
+                "title": "Search (apropos)"
+            }
+        ],
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "manpages.openFromSelection",
+                    "group": "navigation"
+                }
+            ]
+        },
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "searchResults",
+                    "title": "Manpages",
+                    "icon": "media/activitybar.svg"
+                }
+            ]
+        },
+        "views": {
+            "searchResults": [
+                {
+                    "id": "searchResults",
+                    "name": "Manpages",
+                    "icon": "media/activitybar.svg",
+                    "contextualTitle": "Manpages",
+                    "when": "manpages:hasResults"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "Manpages",
+            "properties": {
+                "manpages.binary.path": {
+                    "type": "string",
+                    "default": "man",
+                    "description": "Specifies the path of the man binary to execute"
+                },
+                "manpages.binary.args": {
+                    "type": "array",
+                    "default": [],
+                    "description": "Specifies the arguments to be passed to the man binary"
+                },
+                "manpages.apropos.path": {
+                    "type": "string",
+                    "default": "apropos",
+                    "description": "Specifies the path of the apropos binary to execute"
+                },
+                "manpages.apropos.args": {
+                    "type": "array",
+                    "default": [],
+                    "description": "Specifies the arguments to be passed to the apropos binary"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run lint && npm run esbuild-base -- --minify",
+        "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
+        "esbuild": "npm run esbuild-base -- --sourcemap",
+        "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+        "compile": "npm run lint && tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.1.4",
+        "@types/mocha": "^9.0.0",
+        "@types/node": "14.x",
+        "@types/vscode": "^1.61.0",
+        "@typescript-eslint/eslint-plugin": "^4.31.1",
+        "@typescript-eslint/parser": "^4.31.1",
+        "@vscode/test-electron": "^1.6.2",
+        "esbuild": "^0.13.10",
+        "eslint": "^7.32.0",
+        "glob": "^7.1.7",
+        "mocha": "^9.1.1",
+        "typescript": "^4.4.3"
+    }
 }
