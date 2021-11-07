@@ -18,7 +18,8 @@
 import { workspace, languages, window, commands, ExtensionContext, Disposable, Uri } from 'vscode';
 import { MAN_COMMAND_REGEX } from './consts';
 
-import ManpageContentProvider from './provider';
+import ManpageContentProvider from './manpageContentProvider';
+import { SearchResult, SearchResultsProvider } from './searchResultsProvider';
 
 export function activate(context: ExtensionContext) {
 
@@ -59,8 +60,37 @@ export function activate(context: ExtensionContext) {
 		}
 	});
 
+
+	const searchResultsProvider = new SearchResultsProvider(undefined);
+	window.registerTreeDataProvider('searchResults', searchResultsProvider);
+	let openSearchResult = commands.registerCommand('openSearchResult', async (item: string) => {
+		let column = (window.activeTextEditor?.viewColumn ?? -1) + 1; // show to the side
+		return openManPage(item ?? "", column);
+	});
+
+	let searchFromInput = commands.registerCommand('searchFromInput', async () => {
+		const result = await window.showInputBox({
+			value: '',
+			placeHolder: 'Entry name',
+			validateInput: text => {
+				return !MAN_COMMAND_REGEX.test(text) ? 'Invalid entry!' : null;
+			}
+		});
+
+		if (result) {
+			searchResultsProvider.setSearchTerm(result);
+			searchResultsProvider.refresh();
+		}
+		commands.executeCommand('setContext', 'manpages:hasResults', true);
+	});
+
+
 	context.subscriptions.push(
-		providerRegistrations, openFromSelection, openFromInput);
+		providerRegistrations,
+		openFromSelection,
+		openFromInput,
+		searchFromInput,
+		openSearchResult);
 }
 
 export async function openManPage(input: string, column: number) {

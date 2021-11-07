@@ -49,6 +49,17 @@
 				"command": "openFromInput",
 				"category": "Man",
 				"title": "Open page"
+			},
+			{
+				"command": "searchFromInput",
+				"category": "Man",
+				"title": "Search (apropos)"
+			},
+			{
+				"title": "openSearchResult",
+				"command": "openSearchResult",
+				"category": "Man",
+				"enablement": "!inQuickOpen"
 			}
 		],
 		"menus": {
@@ -56,6 +67,26 @@
 				{
 					"command": "openFromSelection",
 					"group": "navigation"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "searchResults",
+					"title": "Man search results",
+					"icon": "media/activitybar.svg"
+				}
+			]
+		},
+		"views": {
+			"searchResults": [
+				{
+					"id": "searchResults",
+					"name": "Man search results",
+					"icon": "media/activitybar.svg",
+					"contextualTitle": "Search Results",
+					"when": "manpages:hasResults"
 				}
 			]
 		},

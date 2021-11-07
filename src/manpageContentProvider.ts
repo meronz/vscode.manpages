@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with vscode.manpages.  If not, see <http://www.gnu.org/licenses/>.
 
+import { userInfo } from 'os';
 import * as vscode from 'vscode';
 import { MAN_COMMAND_SECTION_REGEX } from './consts';
 import ManpageDocument from './manpageDocument';
@@ -55,7 +56,6 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
 		if (document) {
 			return document.content;
 		}
-
 
 		const input = uri.path.substr(1);
 		let m = MAN_COMMAND_SECTION_REGEX.exec(input); // skip leading '/')
