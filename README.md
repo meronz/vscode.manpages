@@ -1,8 +1,24 @@
-# manpages 
+# Manpages 
 
-Open the man page for the word under cursor or selected. Move quickly by following links inside the man page.
+[![Deploy Extension](https://github.com/meronz/vscode.manpages/actions/workflows/publish.yml/badge.svg?branch=main)](https://github.com/meronz/vscode.manpages/actions/workflows/publish.yml)
+
++ Open the man page for the word under cursor or selected.
++ Move quickly by following links inside the man page.
++ Search the manual pages for names and descriptions (apropos).
 
 ## Requirements
+This extension requires `man` to be installed and working from the integrated terminal.
+You may configure the command to execute the man binary with the `man.path` setting 
 
-This extension requires `man` to be installed and working from the integrated terminal.  
-You may configure the command to execute the man binary with the `man.path` setting (for example on Windows with WSL installed you may use the setting `"manpages.binary.path": "wsl man"`) and/or use `"manpages.binary.arg"` setting to pass additional options (execute `man --help` in the terminal to see those) like additional paths to search (`"--manpath=/some/path"`) or locales to use (`"--locale=fr"`).
+## Configuration
+The extension accepts the following configuration parameters:
+
+setting                 | description                  | default
+------------------------|------------------------------|----------
+manpages.binary.path    | Path of the man binary       | man
+manpages.binary.args    | Arguments passed to man      |
+manpages.apropos.path   | Path of the apropos binary   | apropos
+manpages.apropos.args   | Arguments passed to apropos  | 
+
+For example, on Windows with WSL you may use the setting `"manpages.binary.path": "wsl man"`.
+Moreover, you can pass additional arguments to man, like `"--manpath=/some/path"`, `"--locale=fr"`, etc. The complete list depends on the OS, and you can find it by running `man --help`.
