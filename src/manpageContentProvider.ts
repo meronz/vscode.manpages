@@ -112,3 +112,13 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
 }
 
 
+export async function openManPage(input: string) {
+	if (!input || input.length == 0) {
+		return;
+	}
+
+	const uri = vscode.Uri.parse('man:///' + input);
+	const doc = await vscode.workspace.openTextDocument(uri);
+	let textDocument = await vscode.window.showTextDocument(doc);
+	textDocument.options.lineNumbers = 0; // off
+}

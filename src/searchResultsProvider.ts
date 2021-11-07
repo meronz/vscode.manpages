@@ -1,47 +1,59 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
-import * as fs from 'fs';
-import { MAN_APROPOS_REGEX } from './consts';
+import { MAN_APROPOS_REGEX, MAN_COMMAND_REGEX } from './consts';
 import { log } from 'console';
+import { commands, window } from 'vscode';
+import { openManPage } from './manpageContentProvider';
 
-export class SearchResultsProvider implements vscode.TreeDataProvider<SearchResult> {
+export class SearchResultView {
+    provider: SearchResultsProvider;
+    treeView: vscode.TreeView<SearchResult>;
 
-    private _onDidChangeTreeData: vscode.EventEmitter<SearchResult | undefined | void> = new vscode.EventEmitter<SearchResult | undefined | void>();
-    readonly onDidChangeTreeData: vscode.Event<SearchResult | undefined | void> = this._onDidChangeTreeData.event;
+    constructor(context: vscode.ExtensionContext) {
+        this.provider = new SearchResultsProvider();
+        this.treeView = window.createTreeView('searchResults', {
+            treeDataProvider: this.provider,
+        });
 
-    constructor(private searchTerm: string | undefined) {
-    }
+        let openSearchResult = commands.registerCommand('openSearchResult', async (item: string) => {
+            return openManPage(item ?? "");
+        });
 
-    refresh(): void {
-        this._onDidChangeTreeData.fire();
-    }
-
-    getTreeItem(element: SearchResult): vscode.TreeItem {
-        return element;
-    }
-
-    getChildren(_element?: SearchResult): Thenable<SearchResult[]> {
-        if (!this.searchTerm || this.searchTerm.length == 0) {
-            return Promise.resolve([]);
-        }
-
-        let cmd = `man --apropos -a -l ${this.searchTerm}`;
-        return new Promise((resolve, reject) => {
-            const cp = require('child_process');
-            cp.exec(cmd, (err: string, stdout: string, stderr: string) => {
-                if (err) {
-                    vscode.window.showErrorMessage(stderr);
-                    reject(stderr);
-                } else {
-                    let entries = this.parseApropos(stdout);
-                    resolve(entries);
+        let searchFromInput = commands.registerCommand('searchFromInput', async () => {
+            const searchInput = await window.showInputBox({
+                value: '',
+                placeHolder: 'Search value',
+                validateInput: text => {
+                    return !MAN_COMMAND_REGEX.test(text) ? 'Invalid search value!' : null;
                 }
             });
+
+            if (searchInput) {
+                this.search(searchInput);
+            }
         });
+
+        context.subscriptions.push(
+            this.treeView,
+            openSearchResult,
+            searchFromInput
+        );
     }
 
-    setSearchTerm(searchTerm: string | undefined) {
-        this.searchTerm = searchTerm;
+    search(searchInput: string | undefined) {
+        let cmd = `man --apropos -a -l ${searchInput}`;
+        const cp = require('child_process');
+        cp.exec(cmd, async (err: string, stdout: string, stderr: string) => {
+            if (err) {
+                vscode.window.showErrorMessage(stderr);
+            } else {
+                this.provider.results = this.parseApropos(stdout);
+                if (this.provider.results.length > 0) {
+                    this.provider.refresh();
+                    vscode.commands.executeCommand('setContext', 'manpages:hasResults', true);
+                    vscode.commands.executeCommand('workbench.view.extension.searchResults');
+                }
+            }
+        });
     }
 
     parseApropos(stdout: string): SearchResult[] {
@@ -67,14 +79,30 @@ export class SearchResultsProvider implements vscode.TreeDataProvider<SearchResu
 
         return results;
     }
-
 }
 
+export class SearchResultsProvider implements vscode.TreeDataProvider<SearchResult> {
 
+    private _onDidChangeTreeData: vscode.EventEmitter<SearchResult | undefined | void> = new vscode.EventEmitter<SearchResult | undefined | void>();
+    readonly onDidChangeTreeData: vscode.Event<SearchResult | undefined | void> = this._onDidChangeTreeData.event;
+    public results: SearchResult[] = [];
+
+    refresh(): void {
+        this._onDidChangeTreeData.fire();
+    }
+
+    getTreeItem(element: SearchResult): vscode.TreeItem {
+        return element;
+    }
+
+    getChildren(_element?: SearchResult): Thenable<SearchResult[]> {
+        return Promise.resolve(this.results);
+    }
+}
 
 export class SearchResult extends vscode.TreeItem {
     constructor(name: string, section: string, description: string) {
-        super(`${name}(${section})`, vscode.TreeItemCollapsibleState.None);
+        super(`${name} (${section})`, vscode.TreeItemCollapsibleState.None);
         this.tooltip = description;
         this.description = description;
         this.command = {
@@ -83,11 +111,4 @@ export class SearchResult extends vscode.TreeItem {
             arguments: [`${name}(${section})`]
         }
     }
-
-    //iconPath = {
-    //	light: path.join(__filename, '..', '..', 'resources', 'light', 'searchResult.svg'),	
-    //	dark: path.join(__filename, '..', '..', 'resources', 'dark', 'searchResult.svg')
-    //};
-
-    contextValue = 'dependency';
 }
