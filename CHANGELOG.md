@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.1.0
+
+- Added logo
+- Implemented search functionalty (apropos)
+- Code fixes and cleanup
+
 ## 0.0.3
 
 - Updated dependencies.

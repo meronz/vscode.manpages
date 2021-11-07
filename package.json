@@ -3,7 +3,7 @@
     "displayName": "Manpages",
     "publisher": "meronz",
     "description": "Quickly open man pages and navigate through them.",
-    "version": "0.0.6",
+    "version": "0.1.0",
     "icon": "media/logo.png",
     "author": {
         "name": "Salvatore Merone"
