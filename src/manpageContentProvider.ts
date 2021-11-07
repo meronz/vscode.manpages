@@ -16,7 +16,7 @@
 // along with vscode.manpages.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as vscode from 'vscode';
-import { MAN_COMMAND_REGEX, MAN_COMMAND_SECTION_REGEX } from './consts';
+import { MAN_COMMAND_REGEX } from './consts';
 import ManpageDocument from './manpageDocument';
 import child_process = require('child_process');
 
@@ -103,15 +103,14 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
         }
 
         const input = uri.path.substr(1);
-        let m = MAN_COMMAND_SECTION_REGEX.exec(input); // skip leading '/')
+        let m = MAN_COMMAND_REGEX.exec(input); // skip leading '/')
 
         if (!m) {
             return new Promise(() => vscode.window.showErrorMessage('undefined'));
         }
 
-        let sectionMatch = m[2]?.match(/\d/);
         let word = m[1];
-        let section = !sectionMatch ? null : sectionMatch[0];
+        let section = m[2];
 
         let cmd = this.buildCmdline(section, word);
 

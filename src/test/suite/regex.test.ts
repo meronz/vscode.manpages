@@ -21,6 +21,7 @@ import { after } from 'mocha';
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
 import * as vscode from 'vscode';
+import { MAN_COMMAND_REGEX } from '../../consts';
 import { SearchResultView } from '../../searchResultsProvider';
 // import * as myExtension from '../extension';
 
@@ -73,4 +74,21 @@ suite('Regex tests', () => {
     }
     test('Parse multiple line (\\n terminator)', () => testWithTerm('\n'));
     test('Parse multiple line (\\r\\n terminator)', () => testWithTerm('\r\n'));
+
+    test('Command parsing regex', () => {
+        assert.match('man', MAN_COMMAND_REGEX);
+        assert.match('man(1)', MAN_COMMAND_REGEX);
+        assert.match('man_man_+0.1.2(1)', MAN_COMMAND_REGEX);
+        assert.match('man_man_+0.1.2(1asd1)', MAN_COMMAND_REGEX);
+        assert.match('man_man_+0.1.2 (1asd1)', MAN_COMMAND_REGEX);
+
+        const m = MAN_COMMAND_REGEX.exec('man_man_+0.1.2 (1asd1)');
+        if (!m) {
+            assert.strictEqual(false, true);
+            return;
+        }
+
+        assert.strictEqual('man_man_+0.1.2', m[1]);
+        assert.strictEqual('1asd1', m[2]);
+    });
 });
