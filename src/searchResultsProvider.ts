@@ -3,6 +3,7 @@ import { MAN_APROPOS_REGEX, MAN_COMMAND_REGEX } from './consts';
 import { log } from 'console';
 import { commands, window } from 'vscode';
 import { openManPage } from './manpageContentProvider';
+import { platform } from 'os';
 
 export class SearchResultView {
     provider: SearchResultsProvider;
@@ -39,8 +40,9 @@ export class SearchResultView {
         );
     }
 
-    search(searchInput: string | undefined) {
-        let cmd = `man --apropos -a -l ${searchInput}`;
+    search(searchInput: string) {
+        let cmd = this.buildCmdline(searchInput);
+
         const cp = require('child_process');
         cp.exec(cmd, async (err: string, stdout: string, stderr: string) => {
             if (err) {
@@ -56,7 +58,22 @@ export class SearchResultView {
         });
     }
 
-    parseApropos(stdout: string): SearchResult[] {
+    private buildCmdline(searchInput: string): string {
+        const path = vscode.workspace.getConfiguration('manpages.apropos').get('path') as string;
+        const args = vscode.workspace.getConfiguration('manpages.apropos').get('args') as string[];
+
+        let cmd = '';
+        cmd += path + ' ';
+        cmd += args.join(' ') + ' ';
+        if (process.platform !== 'darwin') {
+            cmd += '-a -l '
+        }
+        cmd += searchInput;
+
+        return cmd;
+    }
+
+    private parseApropos(stdout: string): SearchResult[] {
         let results: SearchResult[] = [];
 
         stdout.split(/\r?\n/).forEach(line => {

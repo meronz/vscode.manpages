@@ -102,6 +102,16 @@
 					"type": "array",
 					"default": [],
 					"description": "Specifies the arguments to be passed to the man binary"
+				},
+				"manpages.apropos.path": {
+					"type": "string",
+					"default": "apropos",
+					"description": "Specifies the path of the apropos binary to execute"
+				},
+				"manpages.apropos.args": {
+					"type": "array",
+					"default": [],
+					"description": "Specifies the arguments to be passed to the apropos binary"
 				}
 			}
 		}
