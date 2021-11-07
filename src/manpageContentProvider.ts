@@ -16,11 +16,56 @@
 // along with vscode.manpages.  If not, see <http://www.gnu.org/licenses/>.
 
 import * as vscode from 'vscode';
-import { MAN_COMMAND_SECTION_REGEX } from './consts';
+import { MAN_COMMAND_REGEX, MAN_COMMAND_SECTION_REGEX } from './consts';
 import ManpageDocument from './manpageDocument';
 import child_process = require('child_process');
 
-export default class ManpageContentProvider implements vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider {
+export class ManpageContentView {
+    constructor(context: vscode.ExtensionContext) {
+
+        const provider = new ManpageContentProvider();
+
+        // register content provider
+        const providerRegistrations = vscode.Disposable.from(
+            vscode.workspace.registerTextDocumentContentProvider(ManpageContentProvider.scheme, provider),
+            vscode.languages.registerDocumentLinkProvider({ scheme: ManpageContentProvider.scheme }, provider)
+        );
+
+        const openFromSelection = vscode.commands.registerTextEditorCommand('manpages.openFromSelection', (editor) => {
+            let text;
+            if (editor.selection.isEmpty) {
+                const wordRange = editor.document.getWordRangeAtPosition(editor.selection.active, MAN_COMMAND_REGEX);
+                if (!wordRange) { return; }
+                text = editor.document.getText(wordRange);
+            } else {
+                text = editor.document.getText(editor.selection);
+            }
+
+            return openManPage(text);
+        });
+
+        const openFromInput = vscode.commands.registerCommand('manpages.openFromInput', async () => {
+            const result = await vscode.window.showInputBox({
+                value: '',
+                placeHolder: 'Entry name',
+                validateInput: text => {
+                    return !MAN_COMMAND_REGEX.test(text) ? 'Invalid entry!' : null;
+                }
+            });
+
+            if (result) {
+                return openManPage(result);
+            }
+        });
+
+        context.subscriptions.push(
+            providerRegistrations,
+            openFromSelection,
+            openFromInput);
+    }
+}
+
+export class ManpageContentProvider implements vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider {
 
     static scheme = 'man';
 

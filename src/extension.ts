@@ -15,56 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with vscode.manpages.  If not, see <http://www.gnu.org/licenses/>.
 
-import { workspace, languages, window, commands, ExtensionContext, Disposable } from 'vscode';
-import { MAN_COMMAND_REGEX } from './consts';
-
-import ManpageContentProvider, { openManPage } from './manpageContentProvider';
+import { ExtensionContext } from 'vscode';
+import { ManpageContentView } from './manpageContentProvider';
 import { SearchResultView } from './searchResultsProvider';
 
 export function activate(context: ExtensionContext): void {
-
-    const provider = new ManpageContentProvider();
-
-    // register content provider
-    const providerRegistrations = Disposable.from(
-        workspace.registerTextDocumentContentProvider(ManpageContentProvider.scheme, provider),
-        languages.registerDocumentLinkProvider({ scheme: ManpageContentProvider.scheme }, provider)
-    );
-
-    const openFromSelection = commands.registerTextEditorCommand('manpages.openFromSelection', (editor) => {
-        let text;
-        if (editor.selection.isEmpty) {
-            const wordRange = editor.document.getWordRangeAtPosition(editor.selection.active, MAN_COMMAND_REGEX);
-            if (!wordRange) { return; }
-            text = editor.document.getText(wordRange);
-        } else {
-            text = editor.document.getText(editor.selection);
-        }
-
-        return openManPage(text);
-    });
-
-    const openFromInput = commands.registerCommand('manpages.openFromInput', async () => {
-        const result = await window.showInputBox({
-            value: '',
-            placeHolder: 'Entry name',
-            validateInput: text => {
-                return !MAN_COMMAND_REGEX.test(text) ? 'Invalid entry!' : null;
-            }
-        });
-
-        if (result) {
-            return openManPage(result);
-        }
-    });
-
+    // tslint:disable-next-line: no-unused-expression
+    new ManpageContentView(context);
     // tslint:disable-next-line: no-unused-expression
     new SearchResultView(context);
-
-    context.subscriptions.push(
-        providerRegistrations,
-        openFromSelection,
-        openFromInput);
 }
 
 // this method is called when your extension is deactivated
