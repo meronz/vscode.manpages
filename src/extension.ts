@@ -23,48 +23,48 @@ import { SearchResultView } from './searchResultsProvider';
 
 export function activate(context: ExtensionContext) {
 
-	const provider = new ManpageContentProvider();
+    const provider = new ManpageContentProvider();
 
-	// register content provider
-	const providerRegistrations = Disposable.from(
-		workspace.registerTextDocumentContentProvider(ManpageContentProvider.scheme, provider),
-		languages.registerDocumentLinkProvider({ scheme: ManpageContentProvider.scheme }, provider)
-	);
+    // register content provider
+    const providerRegistrations = Disposable.from(
+        workspace.registerTextDocumentContentProvider(ManpageContentProvider.scheme, provider),
+        languages.registerDocumentLinkProvider({ scheme: ManpageContentProvider.scheme }, provider)
+    );
 
-	let openFromSelection = commands.registerTextEditorCommand('openFromSelection', editor => {
-		let text;
-		if (editor.selection.isEmpty) {
-			const wordRange = editor.document.getWordRangeAtPosition(editor.selection.active, MAN_COMMAND_REGEX);
-			if (!wordRange) { return; }
-			text = editor.document.getText(wordRange);
-		} else {
-			text = editor.document.getText(editor.selection);
-		}
+    let openFromSelection = commands.registerTextEditorCommand('openFromSelection', editor => {
+        let text;
+        if (editor.selection.isEmpty) {
+            const wordRange = editor.document.getWordRangeAtPosition(editor.selection.active, MAN_COMMAND_REGEX);
+            if (!wordRange) { return; }
+            text = editor.document.getText(wordRange);
+        } else {
+            text = editor.document.getText(editor.selection);
+        }
 
-		return openManPage(text);
-	});
+        return openManPage(text);
+    });
 
-	let openFromInput = commands.registerCommand('openFromInput', async (editor) => {
-		const result = await window.showInputBox({
-			value: '',
-			placeHolder: 'Entry name',
-			validateInput: text => {
-				return !MAN_COMMAND_REGEX.test(text) ? 'Invalid entry!' : null;
-			}
-		});
+    let openFromInput = commands.registerCommand('openFromInput', async (editor) => {
+        const result = await window.showInputBox({
+            value: '',
+            placeHolder: 'Entry name',
+            validateInput: text => {
+                return !MAN_COMMAND_REGEX.test(text) ? 'Invalid entry!' : null;
+            }
+        });
 
-		if (result) {
-			return openManPage(result);
-		}
-	});
+        if (result) {
+            return openManPage(result);
+        }
+    });
 
-	// tslint:disable-next-line: no-unused-expression
-	new SearchResultView(context);
+    // tslint:disable-next-line: no-unused-expression
+    new SearchResultView(context);
 
-	context.subscriptions.push(
-		providerRegistrations,
-		openFromSelection,
-		openFromInput);
+    context.subscriptions.push(
+        providerRegistrations,
+        openFromSelection,
+        openFromInput);
 }
 
 // this method is called when your extension is deactivated
