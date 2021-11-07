@@ -75,7 +75,6 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
 			cp.exec(cmd, (err: string, stdout: string, stderr: string) => {
 				if (err) {
 					vscode.window.showErrorMessage(stderr);
-					reject(stderr);
 				} else {
 					document = new ManpageDocument(stdout);
 					this._documents.set(uri.toString(), document);
