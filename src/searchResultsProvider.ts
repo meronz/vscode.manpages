@@ -20,6 +20,7 @@ import { MAN_APROPOS_REGEX, MAN_COMMAND_REGEX, MAN_COMMAND_SECTION_REGEX } from 
 import { log } from 'console';
 import { commands, window } from 'vscode';
 import { openManPage } from './manpageContentProvider';
+import child_process = require('child_process');
 
 export class SearchResultView {
     provider: SearchResultsProvider;
@@ -32,7 +33,7 @@ export class SearchResultView {
         });
 
         let openSearchResult = commands.registerCommand('openSearchResult', async (item: string) => {
-            return openManPage(item ?? "");
+            return openManPage(item ?? '');
         });
 
         let searchFromInput = commands.registerCommand('searchFromInput', async () => {
@@ -56,11 +57,10 @@ export class SearchResultView {
         );
     }
 
-    search(searchInput: string) {
+    search(searchInput: string): void {
         let cmd = this.buildCmdline(searchInput);
 
-        const cp = require('child_process');
-        cp.exec(cmd, async (err: string, stdout: string, stderr: string) => {
+        child_process.exec(cmd, (err, stdout, stderr) => {
             if (err) {
                 vscode.window.showErrorMessage(stderr);
             } else {
@@ -148,6 +148,7 @@ export class SearchResultsProvider implements vscode.TreeDataProvider<SearchResu
         return element;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getChildren(_element?: SearchResult): Thenable<SearchResult[]> {
         return Promise.resolve(this.results);
     }

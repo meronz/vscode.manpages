@@ -21,7 +21,7 @@ import { MAN_COMMAND_REGEX } from './consts';
 import ManpageContentProvider, { openManPage } from './manpageContentProvider';
 import { SearchResultView } from './searchResultsProvider';
 
-export function activate(context: ExtensionContext) {
+export function activate(context: ExtensionContext): void {
 
     const provider = new ManpageContentProvider();
 
@@ -31,7 +31,7 @@ export function activate(context: ExtensionContext) {
         languages.registerDocumentLinkProvider({ scheme: ManpageContentProvider.scheme }, provider)
     );
 
-    let openFromSelection = commands.registerTextEditorCommand('openFromSelection', editor => {
+    const openFromSelection = commands.registerTextEditorCommand('openFromSelection', (editor) => {
         let text;
         if (editor.selection.isEmpty) {
             const wordRange = editor.document.getWordRangeAtPosition(editor.selection.active, MAN_COMMAND_REGEX);
@@ -44,7 +44,7 @@ export function activate(context: ExtensionContext) {
         return openManPage(text);
     });
 
-    let openFromInput = commands.registerCommand('openFromInput', async (editor) => {
+    const openFromInput = commands.registerCommand('openFromInput', async () => {
         const result = await window.showInputBox({
             value: '',
             placeHolder: 'Entry name',
@@ -68,4 +68,5 @@ export function activate(context: ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() { }
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export function deactivate(): void { }

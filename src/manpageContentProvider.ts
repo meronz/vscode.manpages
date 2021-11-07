@@ -18,6 +18,7 @@
 import * as vscode from 'vscode';
 import { MAN_COMMAND_SECTION_REGEX } from './consts';
 import ManpageDocument from './manpageDocument';
+import child_process = require('child_process');
 
 export default class ManpageContentProvider implements vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider {
 
@@ -35,7 +36,7 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
         this._subscriptions = vscode.workspace.onDidCloseTextDocument(doc => this._documents.delete(doc.uri.toString()));
     }
 
-    dispose() {
+    dispose(): void {
         this._subscriptions.dispose();
         this._documents.clear();
         this._editorDecoration.dispose();
@@ -44,7 +45,7 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
 
     // Expose an event to signal changes of _virtual_ documents
     // to the editor
-    get onDidChange() {
+    get onDidChange(): vscode.Event<vscode.Uri> {
         return this._onDidChange.event;
     }
 
@@ -67,11 +68,10 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
         let word = m[1];
         let section = !sectionMatch ? null : sectionMatch[0];
 
-        const cmd = this.buildCmdline(section, word);
+        let cmd = this.buildCmdline(section, word);
 
-        return new Promise((resolve, reject) => {
-            const cp = require('child_process');
-            cp.exec(cmd, (err: string, stdout: string, stderr: string) => {
+        return new Promise((resolve) => {
+            child_process.exec(cmd, (err, stdout, stderr) => {
                 if (err) {
                     vscode.window.showErrorMessage(stderr);
                 } else {
@@ -83,7 +83,8 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
         });
     }
 
-    provideDocumentLinks(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.DocumentLink[] | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    provideDocumentLinks(document: vscode.TextDocument, _token: vscode.CancellationToken): vscode.DocumentLink[] | undefined {
         const doc = this._documents.get(document.uri.toString());
         if (doc) {
             return doc.links;
@@ -110,13 +111,13 @@ export default class ManpageContentProvider implements vscode.TextDocumentConten
 }
 
 
-export async function openManPage(input: string) {
+export async function openManPage(input: string): Promise<void> {
     if (!input || input.length === 0) {
         return;
     }
 
     const uri = vscode.Uri.parse('man:///' + input);
     const doc = await vscode.workspace.openTextDocument(uri);
-    let textDocument = await vscode.window.showTextDocument(doc);
+    const textDocument = await vscode.window.showTextDocument(doc);
     textDocument.options.lineNumbers = 0; // off
 }

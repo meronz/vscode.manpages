@@ -32,7 +32,7 @@ export default class ManpageDocument {
         const re = /([a-zA-Z_]+)\(([\d])\)/gi;
         const lines = content.split('\n');
 
-        for (var lineIndex = 0; lineIndex <= lines.length; lineIndex++) {
+        for (let lineIndex = 0; lineIndex <= lines.length; lineIndex++) {
             let m;
             while ((m = re.exec(lines[lineIndex])) !== null) {
                 // This is necessary to avoid infinite loops with zero-width matches
@@ -49,11 +49,11 @@ export default class ManpageDocument {
         }
     }
 
-    get content() {
+    get content(): string {
         return this._content;
     }
 
-    get links() {
+    get links(): DocumentLink[] {
         return this._links;
     }
 }
