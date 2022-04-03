@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.1
+
+- Fixed hyphenated pages not opening
+
 ## 0.1.0
 
 - Added logo
