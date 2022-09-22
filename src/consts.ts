@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with vscode.manpages.  If not, see <http://www.gnu.org/licenses/>.
 
-export const MAN_COMMAND_REGEX = /([0-9a-zA-Z_.:+-]+)\s?(?:\(?(\w+)\))?/;
+// we want to match "getch", "explain_fseek_or_die", "flex++", "["
+export const MAN_COMMAND_REGEX = /([0-9a-zA-Z[][0-9a-zA-Z_.:+-]*)\s?(?:\(?(\w+)\))?/;
 export const MAN_COMMAND_SECTION_REGEX = /^([^(]+)\((\w+)\)?/;
 export const MAN_APROPOS_REGEX = /^(.+\s?\(\w+\))+\s*- (.+$)/;
