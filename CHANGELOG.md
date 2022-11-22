@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.1.2
+## 0.1.3
 - Fix broken links and allow for "./-" when opening manpages (FrederikRogalski)
 
 ## 0.1.1
