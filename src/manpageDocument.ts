@@ -29,7 +29,8 @@ export default class ManpageDocument {
     }
 
     private extractLinks(content: string) {
-        const re = /([a-zA-Z_]+)\(([\d])\)/gi;
+        // string MAN_COMMAND_REGEX with global flag appended
+        const re = /([0-9a-zA-Z_\-.:+]+)\s?(?:\((\w+)\))/g;
         const lines = content.split('\n');
 
         for (let lineIndex = 0; lineIndex <= lines.length; lineIndex++) {
