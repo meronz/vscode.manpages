@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.1.2
+- Fix broken links and allow for "./-" when opening manpages (FrederikRogalski)
+
 ## 0.1.1
 
 - Fixed hyphenated pages not opening
