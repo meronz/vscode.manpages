@@ -20,15 +20,17 @@ import { MAN_COMMAND_REGEX } from './consts';
 import ManpageDocument from './manpageDocument';
 import child_process = require('child_process');
 
+
 export class ManpageContentView {
     constructor(context: vscode.ExtensionContext) {
 
-        const provider = new ManpageContentProvider();
+        const provider = new ManpageContentProvider(context);
 
         // register content provider
         const providerRegistrations = vscode.Disposable.from(
             vscode.workspace.registerTextDocumentContentProvider(ManpageContentProvider.scheme, provider),
             vscode.languages.registerDocumentLinkProvider({ scheme: ManpageContentProvider.scheme }, provider)
+            
         );
 
         const openFromSelection = vscode.commands.registerTextEditorCommand('manpages.openFromSelection', (editor) => {
@@ -67,22 +69,20 @@ export class ManpageContentView {
 
 export class ManpageContentProvider implements vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider {
 
-    static scheme = 'man';
+    static scheme = 'manpage';
 
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     private _documents = new Map<string, ManpageDocument>();
     private _editorDecoration = vscode.window.createTextEditorDecorationType({ textDecoration: 'underline' });
-    private _subscriptions: vscode.Disposable;
 
-    constructor() {
+    constructor(context: vscode.ExtensionContext) {
 
         // Listen to the `closeTextDocument`-event which means we must
         // clear the corresponding model object - `ReferencesDocument`
-        this._subscriptions = vscode.workspace.onDidCloseTextDocument(doc => this._documents.delete(doc.uri.toString()));
+        context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(doc => this.onDidCloseTextDocument(doc)));
     }
 
     dispose(): void {
-        this._subscriptions.dispose();
         this._documents.clear();
         this._editorDecoration.dispose();
         this._onDidChange.dispose();
@@ -94,30 +94,35 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
         return this._onDidChange.event;
     }
 
-    provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
+    onDidCloseTextDocument(doc: vscode.TextDocument): void {
+        this._documents.delete(doc.uri.toString());
+        this._onDidChange.fire(doc.uri);
+    }
 
+
+    provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
         // already loaded?
         let document = this._documents.get(uri.toString());
         if (document) {
             return document.content;
         }
 
-        const input = uri.path.substr(1);
-        let m = MAN_COMMAND_REGEX.exec(input); // skip leading '/')
+        let m = MAN_COMMAND_REGEX.exec(uri.path); // extract word and section from uri
 
         if (!m) {
-            return new Promise(() => vscode.window.showErrorMessage('undefined'));
+            return Promise.reject('Invalid input');
         }
 
         let word = m[1];
         let section = m[2];
 
+        
+        
         let cmd = this.buildCmdline(section, word);
-
-        return new Promise((resolve) => {
-            child_process.exec(cmd, (err, stdout, stderr) => {
+        return new Promise((resolve, reject) => {
+            child_process.exec(cmd,{encoding: 'utf-8'}, (err, stdout, stderr) => {
                 if (err) {
-                    vscode.window.showErrorMessage(stderr);
+                    reject(stderr.toString());
                 } else {
                     document = new ManpageDocument(stdout);
                     this._documents.set(uri.toString(), document);
@@ -139,15 +144,15 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
         const path = vscode.workspace.getConfiguration('manpages.binary').get('path') as string;
         const args = vscode.workspace.getConfiguration('manpages.binary').get('args') as string[];
 
-        let cmd = '';
+        let cmdList = [path, ...args];
 
-        cmd += path + ' ';
-        cmd += args.join(' ') + ' ';
-        if (section) { cmd += section + ' '; }
-        cmd += word + ' ';
+        if (section) { cmdList.push(section); }
+        cmdList.push(word);
 
+        const cmd = cmdList.join(' ');
+        
         if (process.platform === 'darwin') {
-            cmd = `sh -c '${cmd} | col -b; ${'exit "${PIPESTATUS[0]}${pipestatus[1]}"'}'`;
+            return `sh -c '${cmd} | col -b; ${'exit "${PIPESTATUS[0]}${pipestatus[1]}"'}'`;
         }
 
         return cmd;
@@ -160,13 +165,13 @@ export async function openManPage(input: string): Promise<void> {
         return;
     }
 
-    const uri = vscode.Uri.parse('man:///' + input);
+    const uri = vscode.Uri.parse(`manpage:${input}`);
     vscode.workspace.openTextDocument(uri).then(doc => {
         vscode.window.showTextDocument(doc).then(editor => {
             vscode.languages.setTextDocumentLanguage(doc, 'manpage');
             editor.options.lineNumbers = 0; // off
         });
     }, err => {
-        vscode.window.showErrorMessage(err);
+        vscode.window.showErrorMessage(err.message);
     });
 }
