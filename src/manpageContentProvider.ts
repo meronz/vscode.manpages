@@ -161,7 +161,12 @@ export async function openManPage(input: string): Promise<void> {
     }
 
     const uri = vscode.Uri.parse('man:///' + input);
-    const doc = await vscode.workspace.openTextDocument(uri);
-    const textDocument = await vscode.window.showTextDocument(doc);
-    textDocument.options.lineNumbers = 0; // off
+    vscode.workspace.openTextDocument(uri).then(doc => {
+        vscode.window.showTextDocument(doc).then(editor => {
+            vscode.languages.setTextDocumentLanguage(doc, 'manpage');
+            editor.options.lineNumbers = 0; // off
+        });
+    }, err => {
+        vscode.window.showErrorMessage(err);
+    });
 }
