@@ -4,6 +4,10 @@
         "manpage"
     ],
     "repository": {
+        "number": {
+            "match": "((?<![A-Za-z0-9])\\d+)",
+            "name": "constant.numeric"
+        },
         "mansection": {
             "match": "\\S+\\(\\d[0-9a-z]?\\)",
             "name": "markup.bold.reference.man",
@@ -44,22 +48,35 @@
         },
         "links.internal": {
             "match": "([\\w\\.]+\\(\\d[a-z]?\\))",
-            "name": "markup.underline.link.internal.man"
+            "name": "markup.underline.link.internal.man",
+            "captures": {
+                "0": {
+                    "patterns": [
+                        {
+                            "include": "#number"
+                        }
+                    ]
+                }
+            }
         },
         "cliflags": {
-            "match": "((?<![a-zA-Z0-9])--?[a-zA-Z0-9]+)",
+            "match": "((?<![a-zA-Z0-9\\-])--?[a-zA-Z0-9\\-]+)",
             "name": "variable.parameter.flag.man"
         },
         "evar": {
-            "match": "((?<![a-z0-9])\\$?[A-Z_][A-Z0-9_]+)",
+            "match": "((?<![A-Za-z0-9])\\$?[A-Z_][A-Z0-9_]+)",
             "name": "variable.other.const.man"
         },
+        "placeholder": {
+            "match": "(<[a-zA-Z0-9_\\-\\.]+>)",
+            "name": "variable.other.placeholder.man"
+        },
         "pathstr": {
-            "match": "((\\.*|~)\\/[a-zA-Z0-9\\-_\\/\\.]+)",
+            "match": "((?<=(\\s|\\(|\\[))(\\.*|~)\\/[a-zA-Z0-9\\-_\\/\\.]*[a-zA-Z0-9\\/])",
             "name": "string.unquoted.path.man"
         },
         "operator": {
-            "match": "([\\$\\#\\%\\&\\*\\+\\/<=>@\\^\\|~]+)",
+            "match": "([\\$\\#\\%\\&\\*\\+\\/<=>@\\^\\|~])",
             "name": "keyword.control.operator.man"
         },
         "textbody": {
@@ -69,6 +86,9 @@
                 },
                 {
                     "include": "#links.internal"
+                },
+                {
+                    "include": "#placeholder"
                 },
                 {
                     "include": "#cliflags"
@@ -81,6 +101,9 @@
                 },
                 {
                     "include": "#operator"
+                },
+                {
+                    "include": "#number"
                 }
             ]
         }
