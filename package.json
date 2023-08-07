@@ -89,6 +89,26 @@
                 }
             ]
         },
+        "languages": [
+            {
+                "id": "manpage",
+                "aliases": [
+                    "Manpage",
+                    "man"
+                ],
+                "icon": {
+                    "light": "media/logo.png",
+                    "dark": "media/logo.png"
+                }
+            }
+        ],
+        "grammars": [
+            {
+                "language": "manpage",
+                "scopeName": "source.man",
+                "path": "./highlight/manpage.tmLanguage.json"
+            }
+        ],
         "configuration": {
             "title": "Manpages",
             "properties": {
