@@ -1,7 +1,39 @@
 {
     "scopeName": "source.man",
-    "fileTypes": ["manpage"],
+    "fileTypes": [
+        "manpage"
+    ],
     "repository": {
+        "mansection": {
+            "match": "\\S+\\(\\d[0-9a-z]?\\)",
+            "name": "markup.bold.reference.man",
+            "captures": {
+                "0": {
+                    "match": "\\d[0-9a-z]?",
+                    "name": "constant.numeric.section.man"
+                }
+            }
+        },
+        "firstline": {
+            "match": "^(.+(.+)).*\\1$",
+            "name": "markup.title.man",
+            "captures": {
+                "0": {
+                    "patterns": [
+                        {
+                            "include": "#mansection"
+                        }
+                    ]
+                },
+                "1": {
+                    "patterns": [
+                        {
+                            "include": "#mansection"
+                        }
+                    ]
+                }
+            }
+        },
         "headings": {
             "match": "^[A-Z](?>\\S|\\s(?!\\s))*$",
             "name": "markup.heading.man"
@@ -14,6 +46,22 @@
             "match": "([\\w\\.]+\\(\\d[a-z]?\\))",
             "name": "markup.underline.link.internal.man"
         },
+        "cliflags": {
+            "match": "((?<![a-zA-Z0-9])--?[a-zA-Z0-9]+)",
+            "name": "variable.parameter.flag.man"
+        },
+        "evar": {
+            "match": "((?<![a-z0-9])\\$?[A-Z_][A-Z0-9_]+)",
+            "name": "variable.other.const.man"
+        },
+        "pathstr": {
+            "match": "((\\.*|~)\\/[a-zA-Z0-9\\-_\\/\\.]+)",
+            "name": "string.unquoted.path.man"
+        },
+        "operator": {
+            "match": "([\\$\\#\\%\\&\\*\\+\\/<=>@\\^\\|~]+)",
+            "name": "keyword.control.operator.man"
+        },
         "textbody": {
             "patterns": [
                 {
@@ -21,11 +69,26 @@
                 },
                 {
                     "include": "#links.internal"
+                },
+                {
+                    "include": "#cliflags"
+                },
+                {
+                    "include": "#evar"
+                },
+                {
+                    "include": "#pathstr"
+                },
+                {
+                    "include": "#operator"
                 }
             ]
         }
     },
     "patterns": [
+        {
+            "include": "#firstline"
+        },
         {
             "include": "#headings"
         },

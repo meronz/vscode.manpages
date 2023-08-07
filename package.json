@@ -99,7 +99,8 @@
                 "icon": {
                     "light": "media/logo.png",
                     "dark": "media/logo.png"
-                }
+                },
+                "configuration": "highlight/language-configuration.json"
             }
         ],
         "grammars": [
@@ -109,6 +110,11 @@
                 "path": "./highlight/manpage.tmLanguage.json"
             }
         ],
+        "configurationDefaults": {
+            "[manpage]": {
+                "editor.guides.indentation": false
+            }
+        },
         "configuration": {
             "title": "Manpages",
             "properties": {
