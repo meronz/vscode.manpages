@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.4
+- Open manpages in a split editor. This is enabled by default but the old behaviour can
+  be restored by setting `manpages.openAsSplit` to `false`
+
 ## 0.1.3
 - Fix broken links and allow for "./-" when opening manpages (FrederikRogalski)
 
