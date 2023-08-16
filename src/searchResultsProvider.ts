@@ -27,13 +27,14 @@ export class SearchResultView {
     treeView: vscode.TreeView<SearchResult>;
 
     constructor(context: vscode.ExtensionContext) {
+        let openInActiveColumn = !(vscode.workspace.getConfiguration('manpages').get('openAsSplit', true) as boolean);
         this.provider = new SearchResultsProvider();
         this.treeView = window.createTreeView('searchResults', {
             treeDataProvider: this.provider,
         });
 
         let openSearchResult = commands.registerCommand('manpages.openSearchResult', async (item: string) => {
-            return openManPage(item ?? '');
+            return openManPage(item ?? '', openInActiveColumn);
         });
 
         let searchFromInput = commands.registerCommand('manpages.searchFromInput', async () => {

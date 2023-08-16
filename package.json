@@ -3,7 +3,7 @@
     "displayName": "Manpages",
     "publisher": "meronz",
     "description": "Quickly open man pages and navigate through them.",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "icon": "media/logo.png",
     "author": {
         "name": "Salvatore Merone"
@@ -118,6 +118,11 @@
         "configuration": {
             "title": "Manpages",
             "properties": {
+                "manpages.openAsSplit": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Open the manpage result in a split tab"
+                },
                 "manpages.binary.path": {
                     "type": "string",
                     "default": "man",

@@ -1,17 +1,17 @@
 // Copyright (C) 2021 Salvatore Merone
-// 
+//
 // This file is part of vscode.manpages.
-// 
+//
 // vscode.manpages is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // vscode.manpages is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with vscode.manpages.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -33,6 +33,9 @@ export class ManpageContentView {
             
         );
 
+        const openInActiveColumn = !(vscode.workspace.getConfiguration('manpages').get('openAsSplit', true) as boolean);
+
+
         const openFromSelection = vscode.commands.registerTextEditorCommand('manpages.openFromSelection', (editor) => {
             let text;
             if (editor.selection.isEmpty) {
@@ -43,7 +46,7 @@ export class ManpageContentView {
                 text = editor.document.getText(editor.selection);
             }
 
-            return openManPage(text);
+            return openManPage(text, openInActiveColumn);
         });
 
         const openFromInput = vscode.commands.registerCommand('manpages.openFromInput', async () => {
@@ -56,7 +59,7 @@ export class ManpageContentView {
             });
 
             if (result) {
-                return openManPage(result);
+                return openManPage(result, openInActiveColumn);
             }
         });
 
@@ -160,18 +163,18 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
 }
 
 
-export async function openManPage(input: string): Promise<void> {
+export async function openManPage(input: string, inActiveColumn: boolean): Promise<void> {
     if (!input || input.length === 0) {
         return;
     }
 
-    const uri = vscode.Uri.parse(`manpage:${input}`);
-    vscode.workspace.openTextDocument(uri).then(doc => {
-        vscode.window.showTextDocument(doc).then(editor => {
-            vscode.languages.setTextDocumentLanguage(doc, 'manpage');
-            editor.options.lineNumbers = 0; // off
-        });
-    }, err => {
-        vscode.window.showErrorMessage(err.message);
+    const uri = vscode.Uri.parse('man:///' + input);
+    const doc = await vscode.workspace.openTextDocument(uri);
+    const textDocument = await vscode.window.showTextDocument(doc, {
+        preserveFocus: true,
+        preview: true,
+        viewColumn: inActiveColumn ? vscode.ViewColumn.Active : vscode.ViewColumn.Beside
     });
+    textDocument.options.lineNumbers = 0; // off
+    vscode.languages.setTextDocumentLanguage(doc, 'manpage');
 }
