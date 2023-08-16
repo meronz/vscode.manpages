@@ -47,7 +47,7 @@
             "name": "markup.underline.link.man"
         },
         "links.internal": {
-            "match": "([\\w\\.]+\\(\\d[a-z]?\\))",
+            "match": "([\\w\\.\\-]+\\(\\d[a-z]?\\))",
             "name": "markup.underline.link.internal.man",
             "captures": {
                 "0": {
