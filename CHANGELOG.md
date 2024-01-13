@@ -1,6 +1,7 @@
 # Change Log
 
-## 0.1.5
+
+## 0.1.5
 - Made the shortcut position in the editor context menu configurable by setting `manpages.editorMenuShortcutPosition`.
 - Better naming of the shortcut names, since it was not clear to some users how the selection works.
 - Made labels on the search input value clearer.
