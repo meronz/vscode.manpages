@@ -1,9 +1,10 @@
 # Change Log
 
 ## 0.1.5
-- Make the shortcut position in the editor context menu configurable by setting `manpages.editorMenuShortcutPosition`.
+- Made the shortcut position in the editor context menu configurable by setting `manpages.editorMenuShortcutPosition`.
 - Better naming of the shortcut names, since it was not clear to some users how the selection works.
-- Added keybindings contributions to quick open word from selection/cursor, and search (apropos)
+- Made labels on the search input value clearer.
+- Added keybindings contributions to quick open word from selection/cursor, and search (apropos).
 
 ## 0.1.4
 - Open manpages in a split editor. This is enabled by default but the old behaviour can
