@@ -20,7 +20,6 @@ import { MAN_COMMAND_REGEX } from './consts';
 import ManpageDocument from './manpageDocument';
 import child_process = require('child_process');
 
-
 export class ManpageContentView {
     constructor(context: vscode.ExtensionContext) {
 
@@ -30,7 +29,6 @@ export class ManpageContentView {
         const providerRegistrations = vscode.Disposable.from(
             vscode.workspace.registerTextDocumentContentProvider(ManpageContentProvider.scheme, provider),
             vscode.languages.registerDocumentLinkProvider({ scheme: ManpageContentProvider.scheme }, provider)
-            
         );
 
         const openInActiveColumn = !(vscode.workspace.getConfiguration('manpages').get('openAsSplit', true) as boolean);
@@ -74,7 +72,7 @@ export class ManpageContentView {
 
 export class ManpageContentProvider implements vscode.TextDocumentContentProvider, vscode.DocumentLinkProvider {
 
-    static scheme = 'manpage';
+    static scheme = 'man';
 
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     private _documents = new Map<string, ManpageDocument>();
@@ -112,7 +110,8 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
             return document.content;
         }
 
-        let m = MAN_COMMAND_REGEX.exec(uri.path); // extract word and section from uri
+        const input = uri.path.slice(1);
+        let m = MAN_COMMAND_REGEX.exec(input); // skip leading '/')
 
         if (!m) {
             return Promise.reject('Invalid input');
@@ -120,8 +119,6 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
 
         let word = m[1];
         let section = m[2];
-
-        
         
         let cmd = this.buildCmdline(section, word);
         return new Promise((resolve, reject) => {
