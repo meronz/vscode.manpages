@@ -3,7 +3,7 @@
     "displayName": "Manpages",
     "publisher": "meronz",
     "description": "Quickly open man pages and navigate through them.",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "icon": "media/logo.png",
     "author": {
         "name": "Salvatore Merone"
@@ -65,7 +65,18 @@
             "editor/context": [
                 {
                     "command": "manpages.openFromSelection",
-                    "group": "navigation"
+                    "group": "navigation",
+                    "when": "manpages:editorMenuShortcutPosition == navigation"
+                },
+                {
+                    "command": "manpages.openFromSelection",
+                    "group": "1_modification",
+                    "when": "manpages:editorMenuShortcutPosition == 1_modification"
+                },
+                {
+                    "command": "manpages.openFromSelection",
+                    "group": "z_commands",
+                    "when": "manpages:editorMenuShortcutPosition == z_commands"
                 }
             ]
         },
@@ -116,6 +127,16 @@
                     "type": "array",
                     "default": [],
                     "description": "Specifies the arguments to be passed to the apropos binary"
+                },
+                "manpages.editorMenuShortcutPosition": {
+                    "type": "string",
+                    "default": "navigation",
+                    "enum": [
+                        "navigation",
+                        "1_modification",
+                        "z_commands"
+                    ],
+                    "description": "Specifies the position of the 'Open page' command in the editor context menu"
                 }
             }
         }

@@ -15,15 +15,21 @@
 // You should have received a copy of the GNU General Public License
 // along with vscode.manpages.  If not, see <http://www.gnu.org/licenses/>.
 
-import { ExtensionContext } from 'vscode';
+import { ExtensionContext, workspace, commands } from 'vscode';
 import { ManpageContentView } from './manpageContentProvider';
 import { SearchResultView } from './searchResultsProvider';
 
 export function activate(context: ExtensionContext): void {
-    // tslint:disable-next-line: no-unused-expression
     new ManpageContentView(context);
-    // tslint:disable-next-line: no-unused-expression
     new SearchResultView(context);
+
+    workspace.onDidChangeConfiguration(setContextFromConfiguration);
+}
+
+function setContextFromConfiguration(): void {
+    // Setup context menu position
+    let editorMenuShortcutPosition = workspace.getConfiguration('manpages').get('editorMenuShortcutPosition', 'navigation');
+    commands.executeCommand('setContext', 'manpages:editorMenuShortcutPosition', editorMenuShortcutPosition);
 }
 
 // this method is called when your extension is deactivated

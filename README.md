@@ -19,6 +19,8 @@ manpages.binary.path    | Path of the man binary       | man
 manpages.binary.args    | Arguments passed to man      |
 manpages.apropos.path   | Path of the apropos binary   | apropos
 manpages.apropos.args   | Arguments passed to apropos  | 
+manpages.openAsSplit    | Open the manpage result in a split tab | true
+manpages.editorMenuShortcutPosition | Specifies the position of the 'Open page' command in the editor context menu | navigation
 
 For example, on Windows with WSL you may use the setting `"manpages.binary.path": "wsl man"`.
 Moreover, you can pass additional arguments to man, like `"--manpath=/some/path"`, `"--locale=fr"`, etc. The complete list depends on the OS, and you can find it by running `man --help`.
