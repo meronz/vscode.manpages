@@ -1,0 +1,122 @@
+{
+    "scopeName": "source.man",
+    "fileTypes": [
+        "manpage"
+    ],
+    "repository": {
+        "number": {
+            "match": "((?<![A-Za-z0-9])\\d+)",
+            "name": "constant.numeric"
+        },
+        "mansection": {
+            "match": "\\S+\\(\\d[0-9a-z]?\\)",
+            "name": "markup.bold.reference.man",
+            "captures": {
+                "0": {
+                    "match": "\\d[0-9a-z]?",
+                    "name": "constant.numeric.section.man"
+                }
+            }
+        },
+        "firstline": {
+            "match": "^(.+(.+)).*\\1$",
+            "name": "markup.title.man",
+            "captures": {
+                "0": {
+                    "patterns": [
+                        {
+                            "include": "#mansection"
+                        }
+                    ]
+                },
+                "1": {
+                    "patterns": [
+                        {
+                            "include": "#mansection"
+                        }
+                    ]
+                }
+            }
+        },
+        "headings": {
+            "match": "^[A-Z](?>\\S|\\s(?!\\s))*$",
+            "name": "markup.heading.man"
+        },
+        "links": {
+            "match": "((https?|ftp|file|txmt)://|mailto:)[-:@a-zA-Z0-9_.~%+/?=&#]+(?<![.?:])",
+            "name": "markup.underline.link.man"
+        },
+        "links.internal": {
+            "match": "([\\w\\.\\-]+\\(\\d[a-z]?\\))",
+            "name": "markup.underline.link.internal.man",
+            "captures": {
+                "0": {
+                    "patterns": [
+                        {
+                            "include": "#number"
+                        }
+                    ]
+                }
+            }
+        },
+        "cliflags": {
+            "match": "((?<![a-zA-Z0-9\\-])--?[a-zA-Z0-9\\-]+)",
+            "name": "variable.parameter.flag.man"
+        },
+        "evar": {
+            "match": "((?<![A-Za-z0-9])\\$?[A-Z_][A-Z0-9_]+)",
+            "name": "variable.other.const.man"
+        },
+        "placeholder": {
+            "match": "(<[a-zA-Z0-9_\\-\\.]+>)",
+            "name": "variable.other.placeholder.man"
+        },
+        "pathstr": {
+            "match": "((?<=(\\s|\\(|\\[))(\\.*|~)\\/[a-zA-Z0-9\\-_\\/\\.]*[a-zA-Z0-9\\/])",
+            "name": "string.unquoted.path.man"
+        },
+        "operator": {
+            "match": "([\\$\\#\\%\\&\\*\\+\\/<=>@\\^\\|~])",
+            "name": "keyword.control.operator.man"
+        },
+        "textbody": {
+            "patterns": [
+                {
+                    "include": "#links"
+                },
+                {
+                    "include": "#links.internal"
+                },
+                {
+                    "include": "#placeholder"
+                },
+                {
+                    "include": "#cliflags"
+                },
+                {
+                    "include": "#evar"
+                },
+                {
+                    "include": "#pathstr"
+                },
+                {
+                    "include": "#operator"
+                },
+                {
+                    "include": "#number"
+                }
+            ]
+        }
+    },
+    "patterns": [
+        {
+            "include": "#firstline"
+        },
+        {
+            "include": "#headings"
+        },
+        {
+            "include": "#textbody"
+        }
+    ]
+}

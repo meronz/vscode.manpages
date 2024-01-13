@@ -140,6 +140,32 @@
                 }
             ]
         },
+        "languages": [
+            {
+                "id": "manpage",
+                "aliases": [
+                    "Manpage",
+                    "man"
+                ],
+                "icon": {
+                    "light": "media/logo.png",
+                    "dark": "media/logo.png"
+                },
+                "configuration": "highlight/language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "manpage",
+                "scopeName": "source.man",
+                "path": "./highlight/manpage.tmLanguage.json"
+            }
+        ],
+        "configurationDefaults": {
+            "[manpage]": {
+                "editor.guides.indentation": false
+            }
+        },
         "configuration": {
             "title": "Manpages",
             "properties": {
@@ -194,7 +220,7 @@
     },
     "devDependencies": {
         "@types/glob": "^7.1.4",
-        "@types/mocha": "^9.0.0",
+        "@types/mocha": "^9.1.1",
         "@types/node": "14.x",
         "@types/vscode": "^1.61.0",
         "@typescript-eslint/eslint-plugin": "^4.31.1",
