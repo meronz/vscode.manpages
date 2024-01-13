@@ -104,20 +104,20 @@
         "keybindings": [
             {
                 "command": "manpages.openFromSelection",
-                "key": "ctrl+shift+k",
-                "mac": "cmd+shift+k",
+                "key": "ctrl+F6",
+                "mac": "cmd+F6",
                 "when": "editorTextFocus"
             },
             {
                 "command": "manpages.openFromCursor",
-                "key": "ctrl+shift+k",
-                "mac": "cmd+shift+k",
+                "key": "ctrl+F6",
+                "mac": "cmd+F6",
                 "when": "editorTextFocus"
             },
             {
                 "command": "manpages.searchFromInput",
-                "key": "ctrl+shift+j",
-                "mac": "cmd+shift+j"
+                "key": "ctrl+F7",
+                "mac": "cmd+F7"
             }
         ],
         "viewsContainers": {
