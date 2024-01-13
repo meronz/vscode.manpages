@@ -40,9 +40,10 @@ export class SearchResultView {
         let searchFromInput = commands.registerCommand('manpages.searchFromInput', async () => {
             const searchInput = await window.showInputBox({
                 value: '',
-                placeHolder: 'Search value',
+                title: 'Man: Search word in all manpages',
+                placeHolder: 'Keyword to search',
                 validateInput: text => {
-                    return !MAN_COMMAND_REGEX.test(text) ? 'Invalid search value!' : null;
+                    return !MAN_COMMAND_REGEX.test(text) ? 'Word does not seem valid!' : null;
                 }
             });
 
