@@ -23,6 +23,7 @@ export function activate(context: ExtensionContext): void {
     new ManpageContentView(context);
     new SearchResultView(context);
 
+    setContextFromConfiguration();
     workspace.onDidChangeConfiguration(setContextFromConfiguration);
 }
 

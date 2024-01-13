@@ -47,8 +47,14 @@
             {
                 "command": "manpages.openFromSelection",
                 "category": "Man",
-                "title": "Man: open page",
-                "enablement": "!inQuickOpen"
+                "title": "Man: open selected word",
+                "enablement": "!inQuickOpen && editorHasSelection && !editorHasMultipleSelections"
+            },
+            {
+                "command": "manpages.openFromCursor",
+                "category": "Man",
+                "title": "Man: open word under cursor",
+                "enablement": "!inQuickOpen && !editorHasSelection && !editorHasMultipleSelections"
             },
             {
                 "command": "manpages.openFromInput",
@@ -66,20 +72,54 @@
                 {
                     "command": "manpages.openFromSelection",
                     "group": "navigation",
-                    "when": "manpages:editorMenuShortcutPosition == navigation"
+                    "when": "manpages:editorMenuShortcutPosition == navigation && editorHasSelection"
                 },
                 {
                     "command": "manpages.openFromSelection",
                     "group": "1_modification",
-                    "when": "manpages:editorMenuShortcutPosition == 1_modification"
+                    "when": "manpages:editorMenuShortcutPosition == 1_modification && editorHasSelection"
                 },
                 {
                     "command": "manpages.openFromSelection",
                     "group": "z_commands",
-                    "when": "manpages:editorMenuShortcutPosition == z_commands"
+                    "when": "manpages:editorMenuShortcutPosition == z_commands && editorHasSelection"
+                },
+                {
+                    "command": "manpages.openFromCursor",
+                    "group": "navigation",
+                    "when": "manpages:editorMenuShortcutPosition == navigation && !editorHasSelection"
+                },
+                {
+                    "command": "manpages.openFromCursor",
+                    "group": "1_modification",
+                    "when": "manpages:editorMenuShortcutPosition == 1_modification && !editorHasSelection"
+                },
+                {
+                    "command": "manpages.openFromCursor",
+                    "group": "z_commands",
+                    "when": "manpages:editorMenuShortcutPosition == z_commands && !editorHasSelection"
                 }
             ]
         },
+        "keybindings": [
+            {
+                "command": "manpages.openFromSelection",
+                "key": "ctrl+shift+k",
+                "mac": "cmd+shift+k",
+                "when": "editorTextFocus"
+            },
+            {
+                "command": "manpages.openFromCursor",
+                "key": "ctrl+shift+k",
+                "mac": "cmd+shift+k",
+                "when": "editorTextFocus"
+            },
+            {
+                "command": "manpages.searchFromInput",
+                "key": "ctrl+shift+j",
+                "mac": "cmd+shift+j"
+            }
+        ],
         "viewsContainers": {
             "activitybar": [
                 {
