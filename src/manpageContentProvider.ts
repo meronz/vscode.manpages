@@ -35,15 +35,16 @@ export class ManpageContentView {
 
 
         const openFromSelection = vscode.commands.registerTextEditorCommand('manpages.openFromSelection', (editor) => {
-            let text;
-            if (editor.selection.isEmpty) {
-                const wordRange = editor.document.getWordRangeAtPosition(editor.selection.active, MAN_COMMAND_REGEX);
-                if (!wordRange) { return; }
-                text = editor.document.getText(wordRange);
-            } else {
-                text = editor.document.getText(editor.selection);
-            }
+            if (editor.selection.isEmpty) return;
+            let text = editor.document.getText(editor.selection);
+            return openManPage(text, openInActiveColumn);
+        });
 
+        const openFromCursor = vscode.commands.registerTextEditorCommand('manpages.openFromCursor', (editor) => {
+            if (!editor.selection.isEmpty) return;
+            const wordRange = editor.document.getWordRangeAtPosition(editor.selection.active, MAN_COMMAND_REGEX);
+            if (!wordRange) { return; }
+            let text = editor.document.getText(wordRange);
             return openManPage(text, openInActiveColumn);
         });
 
@@ -64,6 +65,7 @@ export class ManpageContentView {
         context.subscriptions.push(
             providerRegistrations,
             openFromSelection,
+            openFromCursor,
             openFromInput);
     }
 }
