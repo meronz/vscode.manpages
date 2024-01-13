@@ -175,5 +175,7 @@ export async function openManPage(input: string, inActiveColumn: boolean): Promi
         viewColumn: inActiveColumn ? vscode.ViewColumn.Active : vscode.ViewColumn.Beside
     });
     textDocument.options.lineNumbers = 0; // off
-    vscode.languages.setTextDocumentLanguage(doc, 'manpage');
+
+    const enableSyntaxHighlighting = (vscode.workspace.getConfiguration('manpages').get('enableSyntaxHighlighting', true) as boolean);
+    if(enableSyntaxHighlighting) vscode.languages.setTextDocumentLanguage(doc, 'manpage');
 }

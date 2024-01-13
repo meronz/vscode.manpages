@@ -203,6 +203,11 @@
                         "z_commands"
                     ],
                     "description": "Specifies the position of the 'Open page' command in the editor context menu"
+                },
+                "manpages.enableSyntaxHighlighting": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable syntax highlighting for manpages"
                 }
             }
         }

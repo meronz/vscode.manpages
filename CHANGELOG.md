@@ -1,6 +1,9 @@
 # Change Log
 
 
+## 0.2.0
+- Added syntax highlighting for man pages! (MishaKlopukh, whi-tw)
+
 ## 0.1.5
 - Made the shortcut position in the editor context menu configurable by setting `manpages.editorMenuShortcutPosition`.
 - Better naming of the shortcut names, since it was not clear to some users how the selection works.
