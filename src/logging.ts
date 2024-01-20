@@ -17,12 +17,14 @@
 
 import {ExtensionContext, window, OutputChannel, Range, Selection, Position} from 'vscode';
 
+const LoggingChannelName = 'Manpages';
+
 export class Logging {
     private static _channel: OutputChannel;
 
     constructor(context: ExtensionContext) {
         if(!Logging._channel) {
-            Logging._channel = window.createOutputChannel('manpages');
+            Logging._channel = window.createOutputChannel(LoggingChannelName);
             context.subscriptions.push(Logging._channel);
         }
     }
