@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.1.6
+- Added logging to help debug some issues.
 
 ## 0.1.5
 - Made the shortcut position in the editor context menu configurable by setting `manpages.editorMenuShortcutPosition`.
