@@ -1,0 +1,29 @@
+on:
+  pull_request:
+    branches:
+      - main
+
+name: Lint and test
+jobs:
+  lint:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: git setup
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21
+      - run: npm ci
+      - name: Run tests
+        run: xvfb-run -a npm run test
+        if: runner.os == 'Linux'
+      - name: Run tests
+        run: npm run test
+        if: runner.os != 'Linux'
