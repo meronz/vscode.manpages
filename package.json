@@ -224,7 +224,6 @@
         "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
-        "@types/glob": "^7.1.4",
         "@types/mocha": "^9.1.1",
         "@types/node": "14.x",
         "@types/vscode": "^1.61.0",
@@ -233,7 +232,7 @@
         "@vscode/test-electron": "^2.3.0",
         "esbuild": "^0.13.10",
         "eslint": "^8.56.0",
-        "glob": "^7.1.7",
+        "glob": "^10.1.0",
         "mocha": "^9.1.1",
         "typescript": "^4.4.3"
     }

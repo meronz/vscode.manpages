@@ -21,11 +21,9 @@ jobs:
         with:
           node-version: 21
       - run: npm ci
-      - name: Run lint
-        run: npm run lint
       - name: Run tests
-        run: xvfb-run -a npm test
+        run: xvfb-run -a npm run test
         if: runner.os == 'Linux'
       - name: Run tests
-        run: npm test
+        run: npm run test
         if: runner.os != 'Linux'
