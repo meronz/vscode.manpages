@@ -16,6 +16,7 @@
 // along with vscode.manpages.  If not, see <http://www.gnu.org/licenses/>.
 
 import { DocumentLink, Range, Uri } from 'vscode';
+import { MAN_COMMAND_REGEX } from './consts';
 
 export default class ManpageDocument {
     private _content: string;
@@ -29,8 +30,7 @@ export default class ManpageDocument {
     }
 
     private extractLinks(content: string) {
-        // string MAN_COMMAND_REGEX with global flag appended
-        const re = /([0-9a-zA-Z_\-.:+]+)\s?(?:\((\w+)\))/g;
+        const re = new RegExp(MAN_COMMAND_REGEX, "g");
         const lines = content.split('\n');
 
         for (let lineIndex = 0; lineIndex <= lines.length; lineIndex++) {
