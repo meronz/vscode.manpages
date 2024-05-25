@@ -83,18 +83,17 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     private _documents = new Map<string, ManpageDocument>();
     private _editorDecoration = vscode.window.createTextEditorDecorationType({ textDecoration: 'underline' });
-    private _subscriptions: vscode.Disposable;
     private _logger: Logging;
 
     constructor(context: vscode.ExtensionContext) {
+
         // Listen to the `closeTextDocument`-event which means we must
         // clear the corresponding model object - `ReferencesDocument`
-        this._subscriptions = vscode.workspace.onDidCloseTextDocument(doc => this._documents.delete(doc.uri.toString()));
+        context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(doc => this.onDidCloseTextDocument(doc)));
         this._logger = new Logging(context);
     }
 
     dispose(): void {
-        this._subscriptions.dispose();
         this._documents.clear();
         this._editorDecoration.dispose();
         this._onDidChange.dispose();
@@ -106,31 +105,36 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
         return this._onDidChange.event;
     }
 
-    provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
+    onDidCloseTextDocument(doc: vscode.TextDocument): void {
+        this._documents.delete(doc.uri.toString());
+        this._onDidChange.fire(doc.uri);
+    }
 
+
+    provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
         // already loaded?
         let document = this._documents.get(uri.toString());
         if (document) {
             return document.content;
         }
 
-        const input = uri.path.substr(1);
+        const input = uri.path.slice(1);
         let m = MAN_COMMAND_REGEX.exec(input); // skip leading '/')
 
         if (!m) {
-            return new Promise(() => vscode.window.showErrorMessage('undefined'));
+            return Promise.reject('Invalid input');
         }
 
         let word = m[1];
         let section = m[2];
-
+        
         let cmd = this.buildCmdline(section, word);
         this._logger.log(`Executing command: ${cmd}`);
 
-        return new Promise((resolve) => {
-            child_process.exec(cmd, (err, stdout, stderr) => {
+        return new Promise((resolve, reject) => {
+            child_process.exec(cmd,{encoding: 'utf-8'}, (err, stdout, stderr) => {
                 if (err) {
-                    vscode.window.showErrorMessage(stderr);
+                    reject(stderr.toString());
                 } else {
                     document = new ManpageDocument(stdout);
                     this._documents.set(uri.toString(), document);
@@ -152,15 +156,15 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
         const path = vscode.workspace.getConfiguration('manpages.binary').get('path') as string;
         const args = vscode.workspace.getConfiguration('manpages.binary').get('args') as string[];
 
-        let cmd = '';
+        let cmdList = [path, ...args];
 
-        cmd += path + ' ';
-        cmd += args.join(' ') + ' ';
-        if (section) { cmd += section + ' '; }
-        cmd += word + ' ';
+        if (section) { cmdList.push(section); }
+        cmdList.push(word);
 
+        const cmd = cmdList.join(' ');
+        
         if (process.platform === 'darwin') {
-            cmd = `sh -c '${cmd} | col -b; ${'exit "${PIPESTATUS[0]}${pipestatus[1]}"'}'`;
+            return `sh -c '${cmd} | col -b; ${'exit "${PIPESTATUS[0]}${pipestatus[1]}"'}'`;
         }
 
         return cmd;
@@ -181,4 +185,7 @@ export async function openManPage(input: string, inActiveColumn: boolean): Promi
         viewColumn: inActiveColumn ? vscode.ViewColumn.Active : vscode.ViewColumn.Beside
     });
     textDocument.options.lineNumbers = 0; // off
+
+    const enableSyntaxHighlighting = (vscode.workspace.getConfiguration('manpages').get('enableSyntaxHighlighting', true) as boolean);
+    if(enableSyntaxHighlighting) vscode.languages.setTextDocumentLanguage(doc, 'manpage');
 }

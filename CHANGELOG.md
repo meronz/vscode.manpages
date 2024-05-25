@@ -1,5 +1,9 @@
 # Change Log
 
+
+## 0.2.0
+- Added syntax highlighting for man pages! (MishaKlopukh, whi-tw)
+
 ## 0.1.6
 - Added logging to help debug some issues.
 

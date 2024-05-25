@@ -3,7 +3,7 @@
     "displayName": "Manpages",
     "publisher": "meronz",
     "description": "Quickly open man pages and navigate through them.",
-    "version": "0.1.6",
+    "version": "0.2.0",
     "icon": "media/logo.png",
     "author": {
         "name": "Salvatore Merone"
@@ -140,6 +140,32 @@
                 }
             ]
         },
+        "languages": [
+            {
+                "id": "manpage",
+                "aliases": [
+                    "Manpage",
+                    "man"
+                ],
+                "icon": {
+                    "light": "media/logo.png",
+                    "dark": "media/logo.png"
+                },
+                "configuration": "highlight/language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "manpage",
+                "scopeName": "source.man",
+                "path": "./highlight/manpage.tmLanguage.json"
+            }
+        ],
+        "configurationDefaults": {
+            "[manpage]": {
+                "editor.guides.indentation": false
+            }
+        },
         "configuration": {
             "title": "Manpages",
             "properties": {
@@ -177,6 +203,11 @@
                         "z_commands"
                     ],
                     "description": "Specifies the position of the 'Open page' command in the editor context menu"
+                },
+                "manpages.enableSyntaxHighlighting": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable syntax highlighting for manpages"
                 }
             }
         }
@@ -194,7 +225,7 @@
     },
     "devDependencies": {
         "@types/glob": "^7.1.4",
-        "@types/mocha": "^9.0.0",
+        "@types/mocha": "^9.1.1",
         "@types/node": "14.x",
         "@types/vscode": "^1.61.0",
         "@typescript-eslint/eslint-plugin": "^4.31.1",
