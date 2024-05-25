@@ -19,10 +19,11 @@ import * as vscode from 'vscode';
 import { MAN_COMMAND_REGEX } from './consts';
 import ManpageDocument from './manpageDocument';
 import child_process = require('child_process');
+import { Logging } from './logging';
 
 export class ManpageContentView {
     constructor(context: vscode.ExtensionContext) {
-
+        const logger = new Logging(context);
         const provider = new ManpageContentProvider(context);
 
         // register content provider
@@ -35,16 +36,20 @@ export class ManpageContentView {
 
 
         const openFromSelection = vscode.commands.registerTextEditorCommand('manpages.openFromSelection', (editor) => {
+            logger.log(`openFromSelection called with selection: ${editor.selection.isEmpty ? 'empty' : 'not empty'}`);
             if (editor.selection.isEmpty) return;
             let text = editor.document.getText(editor.selection);
+            logger.log(`openFromSelection selection: ${logger.printSelection(editor.selection)}, text: ${text}`);
             return openManPage(text, openInActiveColumn);
         });
 
         const openFromCursor = vscode.commands.registerTextEditorCommand('manpages.openFromCursor', (editor) => {
+            logger.log(`openFromCursor called with selection: ${editor.selection.isEmpty ? 'empty' : 'not empty'}`);
             if (!editor.selection.isEmpty) return;
             const wordRange = editor.document.getWordRangeAtPosition(editor.selection.active, MAN_COMMAND_REGEX);
             if (!wordRange) { return; }
             let text = editor.document.getText(wordRange);
+            logger.log(`openFromCursor wordRange: ${logger.printRange(wordRange)}, text: ${text}`);
             return openManPage(text, openInActiveColumn);
         });
 
@@ -57,6 +62,7 @@ export class ManpageContentView {
                 }
             });
 
+            logger.log(`openFromInput called with text: ${result}`);
             if (result) {
                 return openManPage(result, openInActiveColumn);
             }
@@ -77,12 +83,15 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     private _documents = new Map<string, ManpageDocument>();
     private _editorDecoration = vscode.window.createTextEditorDecorationType({ textDecoration: 'underline' });
+    private _subscriptions: vscode.Disposable;
+    private _logger: Logging;
 
     constructor(context: vscode.ExtensionContext) {
 
         // Listen to the `closeTextDocument`-event which means we must
         // clear the corresponding model object - `ReferencesDocument`
         context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(doc => this.onDidCloseTextDocument(doc)));
+        this._logger = new Logging(context);
     }
 
     dispose(): void {
@@ -121,6 +130,8 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
         let section = m[2];
         
         let cmd = this.buildCmdline(section, word);
+        this._logger.log(`Executing command: ${cmd}`);
+
         return new Promise((resolve, reject) => {
             child_process.exec(cmd,{encoding: 'utf-8'}, (err, stdout, stderr) => {
                 if (err) {
