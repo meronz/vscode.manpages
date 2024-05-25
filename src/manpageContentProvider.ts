@@ -83,7 +83,6 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
     private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     private _documents = new Map<string, ManpageDocument>();
     private _editorDecoration = vscode.window.createTextEditorDecorationType({ textDecoration: 'underline' });
-    private _subscriptions: vscode.Disposable;
     private _logger: Logging;
 
     constructor(context: vscode.ExtensionContext) {
