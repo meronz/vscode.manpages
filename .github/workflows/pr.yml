@@ -1,0 +1,20 @@
+on:
+  pull_request:
+    branches:
+      - main
+
+name: Lint and test
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 21
+      - run: npm ci
+      - name: Run lint
+        run: npm run lint
+      - name: Run tests
+        run: npm run test

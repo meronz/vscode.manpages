@@ -30,7 +30,7 @@ export default class ManpageDocument {
     }
 
     private extractLinks(content: string) {
-        const re = new RegExp(MAN_COMMAND_REGEX, "g");
+        const re = new RegExp(MAN_COMMAND_REGEX, 'g');
         const lines = content.split('\n');
 
         for (let lineIndex = 0; lineIndex <= lines.length; lineIndex++) {
