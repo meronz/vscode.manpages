@@ -106,6 +106,10 @@ export class ManpageContentProvider implements vscode.TextDocumentContentProvide
     }
 
     onDidCloseTextDocument(doc: vscode.TextDocument): void {
+        if (doc.uri.scheme !== ManpageContentProvider.scheme) {
+            return;
+        }
+
         this._documents.delete(doc.uri.toString());
         this._onDidChange.fire(doc.uri);
     }
